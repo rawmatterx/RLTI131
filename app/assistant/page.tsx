@@ -186,7 +186,7 @@ function AssistantPageInner() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {/* Header */}
       <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-4">
@@ -203,7 +203,7 @@ function AssistantPageInner() {
                   <Bot className="h-6 w-6 text-accent" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">AI Assistant</h1>
+                  <h1 className="text-2xl font-bold text-gradient">AI Assistant</h1>
                   <p className="text-muted-foreground font-medium">Clinical Knowledge Support</p>
                 </div>
               </div>

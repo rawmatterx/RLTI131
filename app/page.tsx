@@ -44,7 +44,7 @@ export default function Dashboard() {
   }, [mounted, ruleResults])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
       {/* Modern Header with Glassmorphism */}
       <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-6">
@@ -54,7 +54,7 @@ export default function Dashboard() {
                 <Zap className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">I-131 Therapy Assistant</h1>
+                <h1 className="text-3xl font-bold text-gradient">I-131 Therapy Assistant</h1>
                 <p className="text-muted-foreground font-medium">Clinical Decision Support System</p>
               </div>
             </div>

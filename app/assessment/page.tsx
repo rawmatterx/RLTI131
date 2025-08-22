@@ -90,7 +90,7 @@ export default function AssessmentPage() {
 
   const handleSave = async () => {
     try {
-      const res = await dataService.saveAssessment({ id: currentAssessment.id as any, ...currentAssessment })
+      const res = await dataService.saveAssessment({ ...(currentAssessment as any) })
       setSavedAt(new Date().toLocaleTimeString())
       addTimelineEvent({ type: 'data_collected', description: 'Assessment saved' })
       toast({ title: 'Saved', description: `Assessment ${res.id} saved successfully.` })
@@ -171,7 +171,7 @@ export default function AssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {/* Header */}
       <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-4">
@@ -188,7 +188,7 @@ export default function AssessmentPage() {
                   <Users className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">Patient Assessment</h1>
+                  <h1 className="text-2xl font-bold text-gradient">Patient Assessment</h1>
                   <p className="text-muted-foreground font-medium">I-131 Therapy Eligibility Evaluation</p>
                 </div>
               </div>
