@@ -245,8 +245,8 @@ function AssistantPageInner() {
                 <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => checkHealth()}>
                   {healthLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
                 </Button>
-                <Button variant="outline" size="sm" asChild className="bg-card border-border hover:bg-card">
-                  <Link href="/todos">Todos</Link>
+                <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => clearSession()}>
+                  Clear Session
                 </Button>
                 <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => insertQuickText("Summarize current patient context and key preparation steps.")}>
                   Quick Insert
