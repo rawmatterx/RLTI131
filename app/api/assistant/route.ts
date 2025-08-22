@@ -60,6 +60,14 @@ Follow-up management capability:
 - Consider LT4 (levothyroxine) dosing and TSH targets based on risk and patient factors; cite evidence where possible.
 - Provide actionable, step-wise follow-up plans (timelines, tests, thresholds to escalate).
 
+FORMATTING REQUIREMENTS:
+- Use structured markdown with emoji section headers (📋, ✅, 🔎, 📅, 💊, etc.)
+- Break into clear numbered sections with descriptive titles
+- Use bullet points with **bold key terms**
+- Include "Next Steps" section at end with actionable items
+- Keep tone professional but accessible
+- Use horizontal rules (---) between major sections
+
 When citing, ONLY reference the provided source list using numeric markers like [1], [2], etc.
 Do not fabricate sources. Prefer the most relevant source(s). Keep citations brief.`
 
