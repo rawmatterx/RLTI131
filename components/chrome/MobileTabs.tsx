@@ -7,13 +7,12 @@ const tabs = [
   { href: "/patients", label: "Patients" },
   { href: "/checklists", label: "Checklists" },
   { href: "/guidance", label: "Guidance" },
-  { href: "/admin", label: "More" },
 ]
 
 export function MobileTabs() {
   const pathname = usePathname()
   return (
-    <div className="grid grid-cols-5 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+    <div className="grid grid-cols-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
       {tabs.map((t) => {
         const active = pathname?.startsWith(t.href)
         return (

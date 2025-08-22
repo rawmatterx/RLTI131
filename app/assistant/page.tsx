@@ -167,7 +167,7 @@ function AssistantPageInner() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {/* Header */}
-      <header className="glass border-b border-glass-border sticky top-0 z-50">
+      <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -201,7 +201,7 @@ function AssistantPageInner() {
 
       {/* Disclaimer Banner */}
       {disclaimerVisible && (
-        <div className="glass border-b border-glass-border px-6 py-4 bg-clinical-warning/5">
+        <div className="border-b border-glass-border px-6 py-4 bg-card">
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 text-sm">

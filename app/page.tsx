@@ -46,7 +46,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
       {/* Modern Header with Glassmorphism */}
-      <header className="glass border-b border-glass-border sticky top-0 z-50">
+      <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ export default function Dashboard() {
 
       <main className="container mx-auto px-6 py-12">
         {/* Enhanced Disclaimer Banner */}
-        <div className="mb-12 p-6 glass rounded-2xl border-2 border-clinical-warning/20">
+        <div className="mb-12 p-6 rounded-2xl border-2 border-clinical-warning/20 bg-card">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-clinical-warning/10 rounded-xl">
               <AlertTriangle className="h-6 w-6 text-clinical-warning" />
@@ -177,36 +177,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Continue Session */}
-          <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-muted/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative z-10">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-secondary/20 rounded-2xl group-hover:bg-secondary/30 transition-colors duration-300">
-                  <FileText className="h-8 w-8 text-secondary-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold">Continue Session</CardTitle>
-                  <CardDescription className="text-base">
-                    Resume previous patient evaluation
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10 pt-0">
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Return to an in-progress assessment or review completed evaluations with comprehensive timeline 
-                history and audit trails.
-              </p>
-              <Link href="/sessions">
-                <Button variant="outline" className="w-full h-12 text-base font-semibold border-2 hover:bg-secondary/10 group-hover:shadow-lg transition-all duration-300">
-                  View Sessions
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
           {/* AI Assistant */}
           <Card className="card-hover border-2 group overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -237,36 +207,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Protocol Library */}
-          <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-muted/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative z-10">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-muted/20 rounded-2xl group-hover:bg-muted/30 transition-colors duration-300">
-                  <BookOpen className="h-8 w-8 text-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold">Protocol Library</CardTitle>
-                  <CardDescription className="text-base">
-                    Access standardized treatment protocols
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10 pt-0">
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Browse comprehensive preparation protocols, dosing guidelines, and patient handouts for various 
-                I-131 therapy scenarios with export capabilities.
-              </p>
-              <Link href="/protocols">
-                <Button variant="outline" className="w-full h-12 text-base font-semibold border-2 hover:bg-muted/10 group-hover:shadow-lg transition-all duration-300">
-                  Browse Protocols
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
           {/* Safety Center */}
           <Card className="card-hover border-2 group overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-br from-clinical-warning/5 to-clinical-error/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -291,36 +231,6 @@ export default function Dashboard() {
               <Link href="/safety">
                 <Button variant="outline" className="w-full h-12 text-base font-semibold border-2 hover:bg-clinical-warning/5 group-hover:shadow-lg transition-all duration-300">
                   Safety Tools
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Admin Settings */}
-          <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-muted/5 to-border/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative z-10">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-4 bg-muted/20 rounded-2xl group-hover:bg-muted/30 transition-colors duration-300">
-                  <Settings className="h-8 w-8 text-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold">Admin Settings</CardTitle>
-                  <CardDescription className="text-base">
-                    System configuration and data management
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10 pt-0">
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Configure API settings, manage data retention policies, export comprehensive session data, 
-                and customize system preferences for your institution.
-              </p>
-              <Link href="/admin">
-                <Button variant="outline" className="w-full h-12 text-base font-semibold border-2 hover:bg-muted/10 group-hover:shadow-lg transition-all duration-300">
-                  Settings
                   <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
               </Link>
