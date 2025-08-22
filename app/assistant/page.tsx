@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ArrowLeft, Send, Paperclip, AlertTriangle, Clock, Bot, Loader2 } from "lucide-react"
+import { ArrowLeft, Send, Paperclip, AlertTriangle, Bot, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { usePatientStore, useSessionStore } from "@/src/store"
 import { ragAssistant } from "@/src/modules/rag/api"
-import { SessionTimeline } from "@/src/components/assistant/SessionTimeline"
+// import { SessionTimeline } from "@/src/components/assistant/SessionTimeline" // removed sidebar
 import { ChatMessage } from "@/src/components/assistant/ChatMessage"
-import { ContextPanel } from "@/src/components/assistant/ContextPanel"
+// import { ContextPanel } from "@/src/components/assistant/ContextPanel" // removed sidebar
 import { CitationDrawer } from "@/src/components/assistant/CitationDrawer"
 
 function AssistantPageInner() {
@@ -77,11 +77,21 @@ function AssistantPageInner() {
         recentEvents: timeline.slice(-5), // Last 5 events
       }
 
+      const formattingHint = [
+        "Format clearly:",
+        "- Use short headings where helpful",
+        "- Present concise bullet points",
+        "- Keep bullets under ~20 words",
+        "- Include inline numeric citations like [1], [2]",
+        "- End with a brief 'Next steps' list",
+      ].join("\n")
+      const finalUserContent = `${contentToSend}\n\n${formattingHint}`
+
       // One-shot completion with real citations; UI still shows a thinking spinner while waiting
       const res = await ragAssistant.completeOnce({
         messages: [
           ...chatMessages,
-          { id: crypto.randomUUID(), role: "user", content: contentToSend, timestamp: new Date() },
+          { id: crypto.randomUUID(), role: "user", content: finalUserContent, timestamp: new Date() },
         ],
         patientContext: context.patientData,
         ruleOutcomes: context.ruleResults,
@@ -119,7 +129,15 @@ function AssistantPageInner() {
         ruleResults: ruleResults,
         recentEvents: timeline.slice(-5),
       }
-      const res = await ragAssistant.generateRecommendations({
+      const prompt = [
+        "Generate clinical recommendations based on current patient context and rule outcomes.",
+        "Format as concise bullet points with brief headings and inline numeric citations [1], [2] where applicable.",
+        "Conclude with a short 'Next steps' list.",
+      ].join("\n")
+      const res = await ragAssistant.completeOnce({
+        messages: [
+          { id: crypto.randomUUID(), role: "user", content: prompt, timestamp: new Date() },
+        ],
         patientContext: context.patientData,
         ruleOutcomes: context.ruleResults,
       })
@@ -246,27 +264,9 @@ function AssistantPageInner() {
 
       {/* Main Content */}
       <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-200px)]">
-          {/* Left Sidebar - Session Timeline */}
-          <div className="lg:col-span-3">
-            <Card className="h-full border-2 shadow-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-xl flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Clock className="h-5 w-5 text-primary" />
-                  </div>
-                  Session Timeline
-                </CardTitle>
-                <CardDescription className="text-base">Recent activity and events</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <SessionTimeline events={timeline} />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Center - Chat Interface */}
-          <div className="lg:col-span-6">
+        <div className="mx-auto max-w-3xl">
+          {/* Chat Interface */}
+          <div>
             <Card className="h-full flex flex-col border-2 shadow-xl">
               <CardHeader className="pb-3">
                 <CardTitle className="text-xl flex items-center gap-3">
@@ -291,31 +291,36 @@ function AssistantPageInner() {
                         <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                           I can help you with I-131 therapy protocols, patient preparation, safety guidelines, and more.
                         </p>
-                        <div className="flex flex-wrap gap-3 justify-center">
+                        <div className="flex flex-wrap gap-2 justify-center">
                           <Button
-                            variant="outline"
-                            size="lg"
+                            variant="secondary"
+                            size="sm"
                             onClick={() => insertQuickText("What are the contraindications for I-131 therapy?")}
-                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Contraindications
                           </Button>
                           <Button
-                            variant="outline"
-                            size="lg"
+                            variant="secondary"
+                            size="sm"
                             onClick={() => insertQuickText("Explain the low-iodine diet preparation protocol.")}
-                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Diet Protocol
                           </Button>
                           <Button
-                            variant="outline"
-                            size="lg"
+                            variant="secondary"
+                            size="sm"
                             onClick={() => insertQuickText("What are the radiation safety requirements?")}
-                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Safety Guidelines
                           </Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Summarize the current assessment and key findings as concise bullet points with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Summarize Assessment</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Provide ATA-based risk stratification and brief rationale with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">ATA Risk & Rationale</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Recommend preparation pathway (withdrawal vs rhTSH) with brief reasons and references.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Prep Pathway</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("List discharge counseling points for the patient in concise bullet points with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Discharge Points</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Outline follow-up plan and monitoring schedule as bullet points with references.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Follow‑up Plan</Button>
                         </div>
                       </div>
                     )}
@@ -387,13 +392,6 @@ function AssistantPageInner() {
                 </div>
               </div>
             </Card>
-          </div>
-
-          {/* Right Sidebar - Context Panel */}
-          <div className="lg:col-span-3">
-            <div className="space-y-6">
-              <ContextPanel patientData={currentAssessment} ruleResults={ruleResults} onInsertText={insertQuickText} />
-            </div>
           </div>
         </div>
       </div>
