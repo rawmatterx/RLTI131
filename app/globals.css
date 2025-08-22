@@ -161,10 +161,11 @@
 @layer components {
   /* Glassmorphism utility classes */
   .glass {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    /* Make glass solid to avoid see-through text */
+    background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   
   /* Clinical status utilities */
