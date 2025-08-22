@@ -171,7 +171,7 @@ export default function AssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-4">
@@ -188,7 +188,7 @@ export default function AssessmentPage() {
                   <Users className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gradient">Patient Assessment</h1>
+                  <h1 className="text-2xl font-bold">Patient Assessment</h1>
                   <p className="text-muted-foreground font-medium">I-131 Therapy Eligibility Evaluation</p>
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function AssessmentPage() {
               </div>
               <div className="relative">
                 <Progress value={progress} className="h-3 bg-secondary/30" />
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-20 rounded-full" style={{ width: `${progress}%` }} />
+                <div className="absolute inset-0 bg-primary/20 rounded-full" style={{ width: `${progress}%` }} />
               </div>
             </div>
 
@@ -258,7 +258,7 @@ export default function AssessmentPage() {
                     key={step.id}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm whitespace-nowrap border-2 transition-all duration-300 ${
                       index === currentStep
-                        ? "bg-gradient-primary text-white shadow-lg border-primary"
+                        ? "bg-primary text-primary-foreground shadow-lg border-primary"
                         : index < currentStep
                           ? "bg-clinical-success/10 text-clinical-success border-clinical-success/30"
                           : "bg-muted/50 text-muted-foreground border-border/50"
@@ -306,7 +306,7 @@ export default function AssessmentPage() {
                 </Button>
                 {currentStep === steps.length - 1 && (
                   <Link href={{ pathname: '/assistant', query: { autosend: '1', prefill: encodeURIComponent('Please provide a detailed breakdown of the assessment and ATA-based recommendations for this patient.') } }}>
-                    <Button size="lg" className="bg-gradient-primary hover:shadow-xl transition-all duration-300 px-8 text-white font-semibold">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 transition-all duration-300 px-8 text-primary-foreground font-semibold">
                       Complete & Send to Assistant
                     </Button>
                   </Link>

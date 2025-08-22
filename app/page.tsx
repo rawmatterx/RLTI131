@@ -44,17 +44,17 @@ export default function Dashboard() {
   }, [mounted, ruleResults])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen bg-background">
       {/* Modern Header with Glassmorphism */}
       <header className="border-b border-glass-border sticky top-0 z-50 bg-card">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-primary rounded-xl shadow-lg">
+              <div className="p-3 bg-primary rounded-xl shadow-lg">
                 <Zap className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gradient">I-131 Therapy Assistant</h1>
+                <h1 className="text-3xl font-bold">I-131 Therapy Assistant</h1>
                 <p className="text-muted-foreground font-medium">Clinical Decision Support System</p>
               </div>
             </div>
@@ -149,7 +149,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Start New Assessment */}
           <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <CardHeader className="relative z-10">
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-4 bg-primary/10 rounded-2xl group-hover:bg-primary/20 transition-colors duration-300">
@@ -179,7 +179,7 @@ export default function Dashboard() {
 
           {/* AI Assistant */}
           <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <CardHeader className="relative z-10">
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-4 bg-accent/10 rounded-2xl group-hover:bg-accent/20 transition-colors duration-300 animate-pulse-glow">
@@ -209,7 +209,7 @@ export default function Dashboard() {
 
           {/* Safety Center */}
           <Card className="card-hover border-2 group overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-clinical-warning/5 to-clinical-error/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-clinical-warning/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <CardHeader className="relative z-10">
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-4 bg-clinical-warning/10 rounded-2xl group-hover:bg-clinical-warning/20 transition-colors duration-300">
@@ -240,7 +240,7 @@ export default function Dashboard() {
 
         {/* Feature Highlights */}
         <div className="mt-16 text-center">
-          <h2 className="text-3xl font-bold text-gradient mb-4">Powered by Advanced AI</h2>
+          <h2 className="text-3xl font-bold mb-4">Powered by Advanced AI</h2>
           <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
             Leveraging Google's Gemma 3 model for intelligent clinical decision support with evidence-based recommendations
           </p>

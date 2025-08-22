@@ -90,7 +90,7 @@ export function ChatMessage({ message, onCitationClick }: ChatMessageProps) {
         <div
           className={`${
             isUser 
-              ? "bg-gradient-primary text-white p-4 rounded-2xl inline-block max-w-[85%] shadow-lg" 
+              ? "bg-primary text-primary-foreground p-4 rounded-2xl inline-block max-w-[85%] shadow-lg" 
               : "text-foreground p-4 bg-card rounded-2xl border-2 border-border/50 shadow-sm"
           }`}
         >
