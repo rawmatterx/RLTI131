@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,7 +18,7 @@ import { ContextPanel } from "@/src/components/assistant/ContextPanel"
 import { CitationDrawer } from "@/src/components/assistant/CitationDrawer"
 import { useSearchParams } from "next/navigation"
 
-export default function AssistantPage() {
+function AssistantPageInner() {
   const [message, setMessage] = useState("")
   const [isStreaming, setIsStreaming] = useState(false)
   const [showCitations, setShowCitations] = useState(false)
@@ -387,5 +387,15 @@ export default function AssistantPage() {
       {/* Citation Drawer */}
       <CitationDrawer citations={selectedCitations} isOpen={showCitations} onClose={() => setShowCitations(false)} />
     </div>
+  )
+}
+
+export const dynamic = 'force-dynamic'
+
+export default function AssistantPage() {
+  return (
+    <Suspense fallback={<div />}> 
+      <AssistantPageInner />
+    </Suspense>
   )
 }
