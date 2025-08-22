@@ -111,9 +111,15 @@ export default function AssessmentPage() {
   }
 
   const handleClear = () => {
-    updateAssessment({ patient: {}, clinical: {}, labs: {}, prep: {}, safety: {}, contraindications: [], imaging: {}, medications: '', risk: {} } as any)
+    // Reset store completely
+    const { clearAssessment } = usePatientStore.getState()
+    clearAssessment()
+    // Reset current step
+    setCurrentStep(0)
+    setShowRuleResults(false)
+    setRuleResults([])
     setSavedAt("—")
-    toast({ title: 'Cleared', description: 'Assessment data cleared.' })
+    toast({ title: 'Cleared', description: 'Assessment data cleared. Returned to first step.' })
   }
 
   const handleExplainRule = (ruleId: string) => {
@@ -197,7 +203,6 @@ export default function AssessmentPage() {
               <Badge variant="outline" className="status-info border-2 px-4 py-2 font-semibold">
                 Advisory Only
               </Badge>
-              <div className="flex gap-2">
               <Button
                 onClick={handleRunRules}
                 disabled={isRunningRules || currentStep !== steps.length - 1}
@@ -207,26 +212,6 @@ export default function AssessmentPage() {
                 {isRunningRules ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 {isRunningRules ? 'Running…' : 'Run Eligibility Rules'}
               </Button>
-              <Button
-                variant="outline"
-                className="bg-background border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
-                onClick={() => {
-                  const aggressive = confirm('Aggressive histology (tall cell/hobnail/columnar)?')
-                  const distant = confirm('Distant metastasis present?')
-                  const eteGross = confirm('Gross extrathyroidal extension?')
-                  const lnMacro = confirm('Macroscopic lymph node metastasis?')
-                  const vascular = confirm('Vascular invasion present?')
-                  setRiskFactors({
-                    aggressiveHistology: aggressive,
-                    distantMetastasis: distant,
-                    extrathyroidalExtension: eteGross ? 'gross' : 'none',
-                    lymphNodeMetastasis: lnMacro ? 'macroscopic' : 'none',
-                    vascularInvasion: vascular,
-                  })
-                  toast({ title: 'Risk factors updated', description: 'Run rules again to re-stratify.' })
-                }}
-              >Risk Details</Button>
-              </div>
             </div>
           </div>
         </div>
