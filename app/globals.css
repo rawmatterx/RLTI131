@@ -4,90 +4,89 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Modern clinical design system with enhanced contrast and visual hierarchy */
-  --background: oklch(0.99 0.005 240); /* #fafbfc - Subtle warm white */
-  --foreground: oklch(0.15 0.02 240); /* #1e293b - Deep blue-gray */
-  --card: oklch(1 0 0); /* #ffffff - Pure white cards */
-  --card-foreground: oklch(0.15 0.02 240); /* #1e293b - Card text */
-  --popover: oklch(1 0 0); /* #ffffff - Popover background */
-  --popover-foreground: oklch(0.15 0.02 240); /* #1e293b - Popover text */
-  --primary: oklch(0.25 0.08 240); /* #1e40af - Professional blue */
-  --primary-foreground: oklch(0.98 0.01 240); /* #f8fafc - Light text on primary */
-  --secondary: oklch(0.96 0.01 240); /* #f1f5f9 - Light blue-gray */
-  --secondary-foreground: oklch(0.25 0.02 240); /* #334155 - Secondary text */
-  --muted: oklch(0.97 0.01 240); /* #f8fafc - Muted backgrounds */
-  --muted-foreground: oklch(0.45 0.02 240); /* #64748b - Muted text */
-  --accent: oklch(0.55 0.15 260); /* #4f46e5 - Vibrant accent */
-  --accent-foreground: oklch(0.98 0.01 240); /* #f8fafc - Accent text */
-  --destructive: oklch(0.55 0.20 15); /* #dc2626 - Error red */
-  --destructive-foreground: oklch(0.98 0.01 15); /* #fef2f2 - Error text */
-  --border: oklch(0.90 0.01 240); /* #e2e8f0 - Subtle borders */
-  --input: oklch(0.98 0.01 240); /* #f8fafc - Input backgrounds */
-  --ring: oklch(0.55 0.15 260 / 0.3); /* Focus ring */
-  --chart-1: oklch(0.65 0.15 260); /* Chart colors */
-  --chart-2: oklch(0.70 0.15 160);
-  --chart-3: oklch(0.75 0.15 60);
-  --chart-4: oklch(0.60 0.20 300);
-  --chart-5: oklch(0.65 0.20 20);
-  --radius: 0.75rem; /* Increased border radius for modern look */
-  --sidebar: oklch(0.98 0.01 240); /* #f8fafc - Sidebar background */
-  --sidebar-foreground: oklch(0.25 0.02 240); /* #334155 - Sidebar text */
-  --sidebar-primary: oklch(0.25 0.08 240); /* #1e40af - Sidebar primary */
-  --sidebar-primary-foreground: oklch(0.98 0.01 240); /* #f8fafc - Sidebar primary text */
-  --sidebar-accent: oklch(0.55 0.15 260); /* #4f46e5 - Sidebar accent */
-  --sidebar-accent-foreground: oklch(0.98 0.01 240); /* #f8fafc - Sidebar accent text */
-  --sidebar-border: oklch(0.90 0.01 240); /* #e2e8f0 - Sidebar borders */
-  --sidebar-ring: oklch(0.55 0.15 260 / 0.3); /* Sidebar focus ring */
-  
+  /* Medical UI palette (deep blue primary, clinical whites, safety greens) */
+  --background: #f7f9fc; /* clinical page bg */
+  --foreground: #0f172a; /* slate-900 */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #2563eb; /* blue-600 */
+  --primary-foreground: #f8fafc; /* almost white */
+  --secondary: #eef2f7; /* soft gray-blue */
+  --secondary-foreground: #1f2937; /* gray-800 */
+  --muted: #f1f5f9; /* slate-100 */
+  --muted-foreground: #64748b; /* slate-500 */
+  --accent: #3b82f6; /* blue-500 */
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444; /* red-500 */
+  --destructive-foreground: #fef2f2;
+  --border: #e2e8f0; /* slate-200 */
+  --input: #ffffff;
+  --ring: rgba(59, 130, 246, 0.35); /* blue focus */
+  --chart-1: #2563eb;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #8b5cf6;
+  --chart-5: #ef4444;
+  --radius: 0.75rem;
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #3b82f6;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: rgba(59, 130, 246, 0.35);
+
   /* Clinical status colors */
-  --clinical-success: oklch(0.65 0.15 140); /* #10b981 - Success green */
-  --clinical-warning: oklch(0.70 0.15 80); /* #f59e0b - Warning amber */
-  --clinical-error: oklch(0.60 0.20 15); /* #ef4444 - Error red */
-  --clinical-info: oklch(0.60 0.15 220); /* #3b82f6 - Info blue */
-  
-  /* Glassmorphism effects */
-  --glass-bg: oklch(1 0 0 / 0.8);
-  --glass-border: oklch(0.90 0.01 240 / 0.2);
+  --clinical-success: #16a34a; /* green-600 */
+  --clinical-warning: #f59e0b; /* amber-500 */
+  --clinical-error: #ef4444;  /* red-500 */
+  --clinical-info: #3b82f6;   /* blue-500 */
+
+  /* Glass tokens kept for compatibility but mapped to solid palette */
+  --glass-bg: #ffffff;
+  --glass-border: rgba(226, 232, 240, 0.6);
 }
 
 .dark {
-  --background: oklch(0.08 0.01 240); /* #0f172a - Dark blue background */
-  --foreground: oklch(0.95 0.01 240); /* #f1f5f9 - Light text */
-  --card: oklch(0.12 0.01 240); /* #1e293b - Dark cards */
-  --card-foreground: oklch(0.95 0.01 240); /* #f1f5f9 - Card text */
-  --popover: oklch(0.12 0.01 240); /* #1e293b - Dark popover */
-  --popover-foreground: oklch(0.95 0.01 240); /* #f1f5f9 - Popover text */
-  --primary: oklch(0.65 0.15 240); /* #3b82f6 - Bright blue */
-  --primary-foreground: oklch(0.08 0.01 240); /* #0f172a - Dark text on primary */
-  --secondary: oklch(0.20 0.02 240); /* #334155 - Dark secondary */
-  --secondary-foreground: oklch(0.85 0.01 240); /* #cbd5e1 - Secondary text */
-  --muted: oklch(0.15 0.01 240); /* #1e293b - Dark muted */
-  --muted-foreground: oklch(0.65 0.02 240); /* #64748b - Muted text */
-  --accent: oklch(0.65 0.15 260); /* #6366f1 - Bright accent */
-  --accent-foreground: oklch(0.08 0.01 240); /* #0f172a - Dark text on accent */
-  --destructive: oklch(0.65 0.20 15); /* #f87171 - Bright red */
-  --destructive-foreground: oklch(0.08 0.01 15); /* Dark text on destructive */
-  --border: oklch(0.25 0.02 240); /* #475569 - Dark borders */
-  --input: oklch(0.15 0.01 240); /* #1e293b - Dark inputs */
-  --ring: oklch(0.65 0.15 260 / 0.3); /* Dark focus ring */
-  --sidebar: oklch(0.10 0.01 240); /* #0f172a - Dark sidebar */
-  --sidebar-foreground: oklch(0.90 0.01 240); /* #e2e8f0 - Sidebar text */
-  --sidebar-primary: oklch(0.65 0.15 240); /* #3b82f6 - Sidebar primary */
-  --sidebar-primary-foreground: oklch(0.08 0.01 240); /* #0f172a - Sidebar primary text */
-  --sidebar-accent: oklch(0.65 0.15 260); /* #6366f1 - Sidebar accent */
-  --sidebar-accent-foreground: oklch(0.08 0.01 240); /* #0f172a - Sidebar accent text */
-  --sidebar-border: oklch(0.25 0.02 240); /* #475569 - Sidebar borders */
-  --sidebar-ring: oklch(0.65 0.15 260 / 0.3); /* Sidebar focus ring */
-  
-  /* Dark clinical status colors */
-  --clinical-success: oklch(0.70 0.15 140); /* Bright success green */
-  --clinical-warning: oklch(0.75 0.15 80); /* Bright warning amber */
-  --clinical-error: oklch(0.70 0.20 15); /* Bright error red */
-  --clinical-info: oklch(0.70 0.15 220); /* Bright info blue */
-  
-  /* Dark glassmorphism */
-  --glass-bg: oklch(0.12 0.01 240 / 0.8);
-  --glass-border: oklch(0.25 0.02 240 / 0.2);
+  --background: #0b1220; /* deep navy */
+  --foreground: #e5e7eb;
+  --card: #0f172a;
+  --card-foreground: #e5e7eb;
+  --popover: #0f172a;
+  --popover-foreground: #e5e7eb;
+  --primary: #60a5fa; /* blue-400 */
+  --primary-foreground: #0b1220;
+  --secondary: #111827;
+  --secondary-foreground: #cbd5e1;
+  --muted: #111827;
+  --muted-foreground: #94a3b8;
+  --accent: #60a5fa;
+  --accent-foreground: #0b1220;
+  --destructive: #f87171;
+  --destructive-foreground: #0b1220;
+  --border: #1f2937;
+  --input: #0f172a;
+  --ring: rgba(96, 165, 250, 0.35);
+  --sidebar: #0b1220;
+  --sidebar-foreground: #e5e7eb;
+  --sidebar-primary: #60a5fa;
+  --sidebar-primary-foreground: #0b1220;
+  --sidebar-accent: #93c5fd;
+  --sidebar-accent-foreground: #0b1220;
+  --sidebar-border: #1f2937;
+  --sidebar-ring: rgba(96, 165, 250, 0.35);
+
+  /* Dark clinical status */
+  --clinical-success: #22c55e;
+  --clinical-warning: #f59e0b;
+  --clinical-error: #f87171;
+  --clinical-info: #60a5fa;
+
+  --glass-bg: #0f172a;
+  --glass-border: rgba(31, 41, 55, 0.6);
 }
 
 @theme inline {
