@@ -220,7 +220,6 @@ function AssistantPageInner() {
               <div className="flex items-center gap-3">
                 <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => clearSession()}>
                   New Chat
-                </span>
                 </Button>
                 <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => checkHealth()}>
                   {healthLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
