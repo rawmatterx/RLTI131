@@ -29,6 +29,23 @@ export async function POST(req: Request) {
         title: "Low-Iodine Diet Patient Guidance (ThyCa)",
         url: "https://thyca.org/rai/lowiodinediet/",
       },
+      // User-provided follow-up and LT4 dosing sources for grounded retrieval
+      {
+        title: "Levothyroxine Replacement after RAI ablation in GD (JAFES, 2022)",
+        url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9242665/",
+      },
+      {
+        title: "PMC10527945 (follow-up/thyroid cancer related)",
+        url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10527945/",
+      },
+      {
+        title: "PMC6532810 (relevant thyroid management guidance)",
+        url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6532810/",
+      },
+      {
+        title: "ATA Patient Info (Oct 2016)",
+        url: "https://www.thyroid.org/patient-thyroid-information/ct-for-patients/october-2016/vol-9-issue-10-p-5-6/",
+      },
     ]
 
     // Compose system context to guide recommendations with domain constraints and citation style
@@ -37,6 +54,11 @@ export async function POST(req: Request) {
 - Include clear recommendations and safety considerations.
 - When uncertain, say so and suggest verification.
 - Never provide diagnosis; this is clinical decision support only.
+
+Follow-up management capability:
+- Suggest risk-adjusted follow-up per ATA principles (e.g., visit cadence, Tg/anti-Tg and TSH monitoring, imaging triggers).
+- Consider LT4 (levothyroxine) dosing and TSH targets based on risk and patient factors; cite evidence where possible.
+- Provide actionable, step-wise follow-up plans (timelines, tests, thresholds to escalate).
 
 When citing, ONLY reference the provided source list using numeric markers like [1], [2], etc.
 Do not fabricate sources. Prefer the most relevant source(s). Keep citations brief.`
