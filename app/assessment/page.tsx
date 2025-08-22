@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, ArrowRight, CheckCircle, AlertTriangle, XCircle, Loader2, Users, Settings } from "lucide-react"
+import { ArrowLeft, ArrowRight, CheckCircle, AlertTriangle, XCircle, Loader2, Users, Settings, Activity } from "lucide-react"
 import Link from "next/link"
 import { usePatientStore, useSessionStore } from "@/src/store"
 import { rulesEngine } from "@/src/modules/rules/engine"
