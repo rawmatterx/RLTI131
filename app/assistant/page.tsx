@@ -166,28 +166,33 @@ function AssistantPageInner() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {/* Header */}
-      <header className="border-b border-border bg-card">
+      <header className="glass border-b border-glass-border sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="hover:bg-accent/10">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Dashboard
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-xl font-bold text-primary">AI Assistant</h1>
-                <p className="text-sm text-muted-foreground">Clinical Knowledge Support</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Bot className="h-6 w-6 text-accent" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gradient">AI Assistant</h1>
+                  <p className="text-muted-foreground font-medium">Clinical Knowledge Support</p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">
+              <Badge variant="outline" className="status-info border-2 px-4 py-2 font-semibold">
                 Advisory Only
               </Badge>
-              <Button variant="ghost" size="sm" onClick={() => setDisclaimerVisible(!disclaimerVisible)}>
+              <Button variant="ghost" size="sm" onClick={() => setDisclaimerVisible(!disclaimerVisible)} className="hover:bg-accent/10">
                 <AlertTriangle className="h-4 w-4" />
               </Button>
             </div>
@@ -197,46 +202,45 @@ function AssistantPageInner() {
 
       {/* Disclaimer Banner */}
       {disclaimerVisible && (
-        <div className="bg-yellow-50 border-b border-yellow-200 px-6 py-3">
+        <div className="glass border-b border-glass-border px-6 py-4 bg-clinical-warning/5">
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-2">
-                  <Bot className="h-4 w-4" /> Gemma‑3‑27B‑IT (free) via OpenRouter
-                </span>
-                <span className="mx-2">•</span>
-                <span className="inline-flex items-center gap-2">
-                  <span className={`h-2 w-2 rounded-full ${health?.available ? "bg-green-500" : "bg-red-500"}`} />
-                  {healthLoading ? (
-                    <span>Checking model…</span>
-                  ) : (
-                    <span>
-                      {health?.available ? "Online" : "Offline"}
-                      {typeof health?.latencyMs === "number" ? ` · ${health?.latencyMs} ms` : ""}
-                    </span>
-                  )}
-                </span>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-2 px-3 py-1 bg-accent/10 rounded-full">
+                  <Bot className="h-4 w-4 text-accent" />
+                  <span className="font-medium text-accent">Gemma‑3‑27B‑IT via OpenRouter</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-background/50 rounded-full">
+                  <span className={`h-2 w-2 rounded-full ${health?.available ? "bg-clinical-success animate-pulse" : "bg-clinical-error"}`} />
+                  <span className="font-medium text-muted-foreground">
+                    {healthLoading ? "Checking..." : health?.available ? "Online" : "Offline"}
+                    {typeof health?.latencyMs === "number" ? ` · ${health?.latencyMs}ms` : ""}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="bg-transparent" onClick={() => clearSession()}>
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => clearSession()}>
                   New Chat
+                </span>
                 </Button>
-                <Button variant="outline" size="sm" className="bg-transparent" onClick={() => checkHealth()}>
+                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => checkHealth()}>
                   {healthLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
                 </Button>
-                <Button variant="outline" size="sm" asChild className="bg-transparent">
+                <Button variant="outline" size="sm" asChild className="bg-background/50 border-border/50 hover:bg-background">
                   <Link href="/todos">Todos</Link>
                 </Button>
-                <Button variant="outline" size="sm" className="bg-transparent" onClick={() => insertQuickText("Summarize current patient context and key preparation steps.")}>Quick Insert</Button>
+                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => insertQuickText("Summarize current patient context and key preparation steps.")}>
+                  Quick Insert
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDisclaimerVisible(false)}
+                  className="text-clinical-warning hover:text-clinical-warning/80"
+                >
+                  Dismiss
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setDisclaimerVisible(false)}
-                className="text-yellow-600 hover:text-yellow-700"
-              >
-                Dismiss
-              </Button>
             </div>
           </div>
         </div>
@@ -244,16 +248,18 @@ function AssistantPageInner() {
 
       {/* Main Content */}
       <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-200px)]">
           {/* Left Sidebar - Session Timeline */}
           <div className="lg:col-span-3">
-            <Card className="h-full">
+            <Card className="h-full border-2 shadow-lg">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
                   Session Timeline
                 </CardTitle>
-                <CardDescription>Recent activity and events</CardDescription>
+                <CardDescription className="text-base">Recent activity and events</CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 <SessionTimeline events={timeline} />
@@ -263,48 +269,52 @@ function AssistantPageInner() {
 
           {/* Center - Chat Interface */}
           <div className="lg:col-span-6">
-            <Card className="h-full flex flex-col">
+            <Card className="h-full flex flex-col border-2 shadow-xl">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Bot className="h-5 w-5" />
+                <CardTitle className="text-xl flex items-center gap-3">
+                  <div className="p-2 bg-accent/10 rounded-lg animate-pulse-glow">
+                    <Bot className="h-5 w-5 text-accent" />
+                  </div>
                   Clinical Assistant
                 </CardTitle>
-                <CardDescription>Ask questions about I-131 therapy protocols and guidelines</CardDescription>
+                <CardDescription className="text-base">Ask questions about I-131 therapy protocols and guidelines</CardDescription>
               </CardHeader>
 
               {/* Chat Messages */}
-              <CardContent className="flex-1 p-0">
-                <ScrollArea className="h-full px-6">
-                  <div className="space-y-4 py-4">
+              <CardContent className="flex-1 p-0 bg-gradient-to-b from-background/50 to-secondary/5">
+                <ScrollArea className="h-full px-6 py-2">
+                  <div className="space-y-6 py-4">
                     {chatMessages.length === 0 && (
-                      <div className="text-center py-12">
-                        <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-foreground mb-2">Welcome to the Clinical Assistant</h3>
-                        <p className="text-muted-foreground mb-4">
+                      <div className="text-center py-16">
+                        <div className="p-6 bg-accent/10 rounded-3xl w-fit mx-auto mb-6 animate-float">
+                          <Bot className="h-16 w-16 text-accent" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-foreground mb-4">Welcome to the Clinical Assistant</h3>
+                        <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                           I can help you with I-131 therapy protocols, patient preparation, safety guidelines, and more.
                         </p>
-                        <div className="flex flex-wrap gap-2 justify-center">
+                        <div className="flex flex-wrap gap-3 justify-center">
                           <Button
                             variant="outline"
-                            size="sm"
+                            size="lg"
                             onClick={() => insertQuickText("What are the contraindications for I-131 therapy?")}
-                            className="bg-transparent"
+                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Contraindications
                           </Button>
                           <Button
                             variant="outline"
-                            size="sm"
+                            size="lg"
                             onClick={() => insertQuickText("Explain the low-iodine diet preparation protocol.")}
-                            className="bg-transparent"
+                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Diet Protocol
                           </Button>
                           <Button
                             variant="outline"
-                            size="sm"
+                            size="lg"
                             onClick={() => insertQuickText("What are the radiation safety requirements?")}
-                            className="bg-transparent"
+                            className="bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                           >
                             Safety Guidelines
                           </Button>
@@ -317,20 +327,22 @@ function AssistantPageInner() {
                     ))}
 
                     {isStreaming && (
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-accent/10 rounded-lg">
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-accent/10 rounded-xl animate-pulse">
                           <Bot className="h-4 w-4 text-accent" />
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-medium text-sm">Assistant</span>
-                            <div className="flex gap-1">
-                              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                              <div className="w-2 h-2 bg-accent rounded-full animate-pulse delay-100" />
-                              <div className="w-2 h-2 bg-accent rounded-full animate-pulse delay-200" />
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="font-semibold text-base">Assistant</span>
+                            <div className="flex gap-1.5">
+                              <div className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse" />
+                              <div className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse delay-100" />
+                              <div className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse delay-200" />
                             </div>
                           </div>
-                          <p className="text-sm text-muted-foreground">Thinking...</p>
+                          <div className="p-4 bg-accent/5 rounded-xl border border-accent/20">
+                            <p className="text-base text-accent font-medium">Analyzing your request...</p>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -341,35 +353,37 @@ function AssistantPageInner() {
               </CardContent>
 
               {/* Message Input */}
-              <div className="border-t border-border p-4">
-                <div className="flex items-end gap-2">
+              <div className="border-t border-border p-6 bg-card">
+                <div className="flex items-end gap-4">
                   <div className="flex-1">
                     <Textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Ask about I-131 therapy protocols, safety guidelines, patient preparation..."
-                      className="min-h-[60px] resize-none"
+                      className="min-h-[80px] resize-none border-2 focus:border-accent/50 transition-colors duration-300"
                       disabled={isStreaming}
                     />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Button variant="outline" size="sm" className="bg-transparent">
+                  <div className="flex flex-col gap-3">
+                    <Button variant="outline" size="lg" className="bg-background border-2 hover:bg-accent/5">
                       <Paperclip className="h-4 w-4" />
                     </Button>
                     <Button
                       onClick={handleGenerateRecommendations}
                       disabled={isStreaming}
-                      className="bg-accent hover:bg-accent/90"
+                      size="lg"
+                      className="bg-accent hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       Recommend
                     </Button>
                     <Button
                       onClick={() => handleSendMessage()}
                       disabled={!message.trim() || isStreaming}
-                      className="bg-accent hover:bg-accent/90"
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      <Send className="h-4 w-4" />
+                      <Send className="h-5 w-5" />
                     </Button>
                   </div>
                 </div>
@@ -379,7 +393,9 @@ function AssistantPageInner() {
 
           {/* Right Sidebar - Context Panel */}
           <div className="lg:col-span-3">
-            <ContextPanel patientData={currentAssessment} ruleResults={ruleResults} onInsertText={insertQuickText} />
+            <div className="space-y-6">
+              <ContextPanel patientData={currentAssessment} ruleResults={ruleResults} onInsertText={insertQuickText} />
+            </div>
           </div>
         </div>
       </div>

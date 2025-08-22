@@ -171,32 +171,37 @@ export default function AssessmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/10">
       {/* Header */}
-      <header className="border-b border-border bg-card">
+      <header className="glass border-b border-glass-border sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="hover:bg-accent/10">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Dashboard
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-xl font-bold text-primary">Patient Assessment</h1>
-                <p className="text-sm text-muted-foreground">I-131 Therapy Eligibility Evaluation</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gradient">Patient Assessment</h1>
+                  <p className="text-muted-foreground font-medium">I-131 Therapy Eligibility Evaluation</p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">
+              <Badge variant="outline" className="status-info border-2 px-4 py-2 font-semibold">
                 Advisory Only
               </Badge>
               <div className="flex gap-2">
               <Button
                 onClick={handleRunRules}
                 disabled={isRunningRules || currentStep !== steps.length - 1}
-                className="bg-accent hover:bg-accent/90"
+                className="bg-accent hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 px-6"
                 title={currentStep !== steps.length - 1 ? 'Complete assessment steps to run rules' : ''}
               >
                 {isRunningRules ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
@@ -204,7 +209,7 @@ export default function AssessmentPage() {
               </Button>
               <Button
                 variant="outline"
-                className="bg-transparent"
+                className="bg-background border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                 onClick={() => {
                   const aggressive = confirm('Aggressive histology (tall cell/hobnail/columnar)?')
                   const distant = confirm('Distant metastasis present?')
@@ -228,75 +233,82 @@ export default function AssessmentPage() {
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
           {/* Main Assessment Form */}
           <div className="lg:col-span-3">
             {/* Progress Bar */}
-            <div className="mb-8">
+            <div className="mb-10">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-base font-semibold text-foreground">
                   Step {currentStep + 1} of {steps.length}
                 </span>
-                <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
+                <span className="text-base text-muted-foreground font-medium">{Math.round(progress)}% Complete</span>
               </div>
-              <Progress value={progress} className="h-2" />
+              <div className="relative">
+                <Progress value={progress} className="h-3 bg-secondary/30" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-20 rounded-full" style={{ width: `${progress}%` }} />
+              </div>
             </div>
 
             {/* Step Navigation */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <div className="mb-10">
+              <div className="flex items-center gap-3 overflow-x-auto pb-4">
                 {steps.map((step, index) => (
                   <div
                     key={step.id}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm whitespace-nowrap border-2 transition-all duration-300 ${
                       index === currentStep
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-gradient-primary text-white shadow-lg border-primary"
                         : index < currentStep
-                          ? "bg-green-100 text-green-800"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-clinical-success/10 text-clinical-success border-clinical-success/30"
+                          : "bg-muted/50 text-muted-foreground border-border/50"
                     }`}
                   >
-                    <span className="font-medium">{index + 1}</span>
-                    <span>{step.title}</span>
+                    <span className="font-bold text-lg">{index + 1}</span>
+                    <span className="font-semibold">{step.title}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Current Step Content */}
-            <Card>
+            <Card className="border-2 shadow-xl">
               <CardHeader>
-                <CardTitle>{steps[currentStep].title}</CardTitle>
-                <CardDescription>{steps[currentStep].description}</CardDescription>
+                <CardTitle className="text-2xl font-bold">{steps[currentStep].title}</CardTitle>
+                <CardDescription className="text-lg">{steps[currentStep].description}</CardDescription>
               </CardHeader>
-              <CardContent>{renderStep()}</CardContent>
+              <CardContent className="p-8">{renderStep()}</CardContent>
             </Card>
 
             {/* Navigation Buttons */}
-            <div className="flex items-center justify-between mt-8">
+            <div className="flex items-center justify-between mt-10">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentStep === 0}
-                className="bg-transparent"
+                size="lg"
+                className="bg-background border-2 hover:bg-muted/10 transition-all duration-300 px-8"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Previous
               </Button>
 
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">Auto-saved {savedAt}</span>
+                <span className="text-base text-muted-foreground font-medium">Auto-saved {savedAt}</span>
                 <Button
                   onClick={handleNext}
                   disabled={currentStep === steps.length - 1}
-                  className="bg-accent hover:bg-accent/90"
+                  size="lg"
+                  className="bg-accent hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 px-8"
                 >
                   Next
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
                 {currentStep === steps.length - 1 && (
                   <Link href={{ pathname: '/assistant', query: { autosend: '1', prefill: encodeURIComponent('Please provide a detailed breakdown of the assessment and ATA-based recommendations for this patient.') } }}>
-                    <Button className="bg-primary hover:bg-primary/90">Complete & Send to Assistant</Button>
+                    <Button size="lg" className="bg-gradient-primary hover:shadow-xl transition-all duration-300 px-8 text-white font-semibold">
+                      Complete & Send to Assistant
+                    </Button>
                   </Link>
                 )}
               </div>
@@ -310,39 +322,51 @@ export default function AssessmentPage() {
               (() => {
                 const ata = ruleResults.find((r) => r.id.startsWith('ATA-RISK-'))
                 if (!ata) return null
-                const color = ata.severity === 'PASS' ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
+                const color = ata.severity === 'PASS' 
+                  ? 'bg-clinical-success/10 border-clinical-success/30 border-2' 
+                  : 'bg-clinical-warning/10 border-clinical-warning/30 border-2'
                 return (
-                  <Card className={`mb-6 ${color}`}>
+                  <Card className={`mb-8 ${color} shadow-lg`}>
                     <CardHeader>
-                      <CardTitle className="text-lg">ATA Risk</CardTitle>
-                      <CardDescription>2015 ATA recurrence risk stratification</CardDescription>
+                      <CardTitle className="text-xl font-bold flex items-center gap-2">
+                        <div className="p-2 bg-clinical-info/10 rounded-lg">
+                          <Activity className="h-5 w-5 text-clinical-info" />
+                        </div>
+                        ATA Risk
+                      </CardTitle>
+                      <CardDescription className="text-base">2015 ATA recurrence risk stratification</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="text-sm font-medium mb-1">{ata.title}</div>
-                      <p className="text-xs text-muted-foreground">{ata.rationale}</p>
+                    <CardContent className="pt-0">
+                      <div className="text-lg font-bold mb-2 text-foreground">{ata.title}</div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{ata.rationale}</p>
                     </CardContent>
                   </Card>
                 )
               })()
             )}
             {showRuleResults && ruleResults.length > 0 && (
-              <Card>
+              <Card className="border-2 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-lg">Rule Results</CardTitle>
-                  <CardDescription>Eligibility evaluation outcomes</CardDescription>
+                  <CardTitle className="text-xl font-bold flex items-center gap-3">
+                    <div className="p-2 bg-clinical-success/10 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-clinical-success" />
+                    </div>
+                    Rule Results
+                  </CardTitle>
+                  <CardDescription className="text-base">Eligibility evaluation outcomes</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-4">
                   {ruleResults.map((result) => (
-                    <div key={result.id} className={`p-3 rounded-lg border ${getSeverityColor(result.severity)}`}>
-                      <div className="flex items-center gap-2 mb-2">
+                    <div key={result.id} className={`p-4 rounded-xl border-2 ${getSeverityColor(result.severity)} shadow-sm`}>
+                      <div className="flex items-center gap-3 mb-3">
                         {getSeverityIcon(result.severity)}
-                        <span className="font-medium text-sm">{result.title}</span>
+                        <span className="font-semibold text-base">{result.title}</span>
                       </div>
-                      <p className="text-xs mb-2">{result.rationale}</p>
+                      <p className="text-sm mb-3 leading-relaxed">{result.rationale}</p>
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 text-xs"
+                        size="lg"
+                        className="h-8 px-4 text-sm font-semibold hover:bg-background/50 transition-all duration-300"
                         onClick={() => handleExplainRule(result.id)}
                       >
                         Why?
@@ -354,18 +378,23 @@ export default function AssessmentPage() {
             )}
 
             {/* Quick Actions */}
-            <Card className="mt-6">
+            <Card className="mt-8 border-2 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
+                <CardTitle className="text-xl font-bold flex items-center gap-3">
+                  <div className="p-2 bg-accent/10 rounded-lg">
+                    <Settings className="h-5 w-5 text-accent" />
+                  </div>
+                  Quick Actions
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full justify-start bg-transparent" onClick={handleSave}>
+              <CardContent className="space-y-3">
+                <Button variant="outline" size="lg" className="w-full justify-start bg-background border-2 hover:bg-accent/5 transition-all duration-300" onClick={handleSave}>
                   Save Progress
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start bg-transparent" onClick={handleExport}>
+                <Button variant="outline" size="lg" className="w-full justify-start bg-background border-2 hover:bg-accent/5 transition-all duration-300" onClick={handleExport}>
                   Export Summary
                 </Button>
-                <Button variant="outline" size="sm" className="w-full justify-start bg-transparent" onClick={handleClear}>
+                <Button variant="outline" size="lg" className="w-full justify-start bg-background border-2 hover:bg-clinical-error/5 hover:border-clinical-error/30 transition-all duration-300" onClick={handleClear}>
                   Clear Form
                 </Button>
               </CardContent>

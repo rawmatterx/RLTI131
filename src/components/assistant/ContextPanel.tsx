@@ -53,44 +53,46 @@ export function ContextPanel({ patientData, ruleResults, onInsertText }: Context
   return (
     <div className="space-y-6">
       {/* Patient Context */}
-      <Card>
+      <Card className="border-2 shadow-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <User className="h-5 w-5" />
+          <CardTitle className="text-xl flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <User className="h-5 w-5 text-primary" />
+            </div>
             Patient Context
           </CardTitle>
-          <CardDescription>Current assessment data</CardDescription>
+          <CardDescription className="text-base">Current assessment data</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           {patientData.patient?.name && (
-            <div>
-              <span className="text-sm font-medium">Patient:</span>
-              <p className="text-sm text-muted-foreground">{patientData.patient.name}</p>
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <span className="text-sm font-semibold text-primary">Patient:</span>
+              <p className="text-base text-foreground font-medium">{patientData.patient.name}</p>
             </div>
           )}
 
           {patientData.clinical?.diagnosis && (
-            <div>
-              <span className="text-sm font-medium">Diagnosis:</span>
-              <p className="text-sm text-muted-foreground">{patientData.clinical.diagnosis}</p>
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <span className="text-sm font-semibold text-primary">Diagnosis:</span>
+              <p className="text-base text-foreground">{patientData.clinical.diagnosis}</p>
             </div>
           )}
 
           {patientData.labs?.TSH && (
-            <div>
-              <span className="text-sm font-medium">TSH:</span>
-              <p className="text-sm text-muted-foreground">
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <span className="text-sm font-semibold text-primary">TSH:</span>
+              <p className="text-base text-foreground font-medium">
                 {patientData.labs.TSH.value} {patientData.labs.TSH.unit}
               </p>
             </div>
           )}
 
           {patientData.contraindications && patientData.contraindications.length > 0 && (
-            <div>
-              <span className="text-sm font-medium">Contraindications:</span>
-              <div className="flex flex-wrap gap-1 mt-1">
+            <div className="p-3 bg-clinical-error/5 rounded-lg border border-clinical-error/20">
+              <span className="text-sm font-semibold text-clinical-error">Contraindications:</span>
+              <div className="flex flex-wrap gap-2 mt-2">
                 {patientData.contraindications.map((contraindication) => (
-                  <Badge key={contraindication} variant="outline" className="text-xs">
+                  <Badge key={contraindication} className="status-error text-xs font-medium">
                     {contraindication.replace("-", " ")}
                   </Badge>
                 ))}
@@ -99,12 +101,11 @@ export function ContextPanel({ patientData, ruleResults, onInsertText }: Context
           )}
 
           <Button
-            variant="outline"
-            size="sm"
-            className="w-full bg-transparent"
+            size="lg"
+            className="w-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300"
             onClick={() => onInsertText("Please review my current patient data and provide recommendations.")}
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-5 w-5 mr-2" />
             Add to Message
           </Button>
         </CardContent>
@@ -112,34 +113,35 @@ export function ContextPanel({ patientData, ruleResults, onInsertText }: Context
 
       {/* Rule Results */}
       {ruleResults.length > 0 && (
-        <Card>
+        <Card className="border-2 shadow-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+            <CardTitle className="text-xl flex items-center gap-3">
+              <div className="p-2 bg-clinical-success/10 rounded-lg">
+                <Activity className="h-5 w-5 text-clinical-success" />
+              </div>
               Rule Results
             </CardTitle>
-            <CardDescription>Recent eligibility evaluation</CardDescription>
+            <CardDescription className="text-base">Recent eligibility evaluation</CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-32">
-              <div className="space-y-2">
+            <ScrollArea className="h-40">
+              <div className="space-y-3">
                 {ruleResults.map((result) => (
-                  <div key={result.id} className="flex items-center gap-2 p-2 bg-muted rounded text-xs">
+                  <div key={result.id} className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg border border-border/50">
                     {getSeverityIcon(result.severity)}
-                    <span className="flex-1">{result.title}</span>
+                    <span className="flex-1 text-sm font-medium">{result.title}</span>
                   </div>
                 ))}
               </div>
             </ScrollArea>
             <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-3 bg-transparent"
+              size="lg"
+              className="w-full mt-4 bg-clinical-success hover:bg-clinical-success/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() =>
                 onInsertText("Please explain the current rule evaluation results and their clinical implications.")
               }
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-5 w-5 mr-2" />
               Discuss Results
             </Button>
           </CardContent>
@@ -147,28 +149,29 @@ export function ContextPanel({ patientData, ruleResults, onInsertText }: Context
       )}
 
       {/* Quick Inserts */}
-      <Card>
+      <Card className="border-2 shadow-lg">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+          <CardTitle className="text-xl flex items-center gap-3">
+            <div className="p-2 bg-clinical-info/10 rounded-lg">
+              <FileText className="h-5 w-5 text-clinical-info" />
+            </div>
             Quick Inserts
           </CardTitle>
-          <CardDescription>Common clinical questions</CardDescription>
+          <CardDescription className="text-base">Common clinical questions</CardDescription>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-64">
-            <div className="space-y-2">
+          <ScrollArea className="h-72">
+            <div className="space-y-3">
               {quickInserts.map((insert, index) => (
                 <Button
                   key={index}
                   variant="outline"
-                  size="sm"
-                  className="w-full justify-start text-left h-auto p-3 bg-transparent"
+                  className="w-full justify-start text-left h-auto p-4 bg-background/50 border-2 hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
                   onClick={() => onInsertText(insert.text)}
                 >
                   <div>
-                    <div className="font-medium text-sm mb-1">{insert.title}</div>
-                    <div className="text-xs text-muted-foreground line-clamp-2">{insert.text.substring(0, 80)}...</div>
+                    <div className="font-semibold text-base mb-2 text-foreground">{insert.title}</div>
+                    <div className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{insert.text.substring(0, 80)}...</div>
                   </div>
                 </Button>
               ))}

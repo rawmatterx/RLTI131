@@ -46,14 +46,14 @@ export function ChatMessage({ message, onCitationClick }: ChatMessageProps) {
           }}
         />
         {message.citations.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-2 mt-4">
             {message.citations.map((citation) => (
               <a
                 key={citation.id}
                 href={citation.url || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-6 px-2 text-xs inline-flex items-center rounded-md border bg-background hover:bg-accent/10"
+                className="px-3 py-2 text-sm inline-flex items-center rounded-lg border-2 bg-background hover:bg-accent/10 hover:border-accent/30 transition-all duration-300 font-medium"
                 onClick={(e) => {
                   if (!citation.url) {
                     e.preventDefault()
@@ -61,7 +61,8 @@ export function ChatMessage({ message, onCitationClick }: ChatMessageProps) {
                   }
                 }}
               >
-                [{Number(citation.id) || 1}] {citation.source}
+                <span className="text-accent font-bold">[{Number(citation.id) || 1}]</span>
+                <span className="ml-2">{citation.source}</span>
               </a>
             ))}
           </div>
@@ -71,27 +72,35 @@ export function ChatMessage({ message, onCitationClick }: ChatMessageProps) {
   }
 
   return (
-    <div className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
-      <div className={`p-2 rounded-lg flex-shrink-0 ${isUser ? "bg-primary/10" : "bg-accent/10"}`}>
+    <div className={`flex items-start gap-4 ${isUser ? "flex-row-reverse" : ""}`}>
+      <div className={`p-3 rounded-xl flex-shrink-0 shadow-md ${isUser ? "bg-primary/10 border border-primary/20" : "bg-accent/10 border border-accent/20"}`}>
         {isUser ? (
-          <User className={`h-4 w-4 ${isUser ? "text-primary" : "text-accent"}`} />
+          <User className={`h-5 w-5 ${isUser ? "text-primary" : "text-accent"}`} />
         ) : (
-          <Bot className={`h-4 w-4 ${isUser ? "text-primary" : "text-accent"}`} />
+          <Bot className={`h-5 w-5 ${isUser ? "text-primary" : "text-accent"}`} />
         )}
       </div>
       <div className={`flex-1 ${isUser ? "text-right" : ""}`}>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-medium text-sm">{isUser ? "You" : "Assistant"}</span>
-          <span className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="font-semibold text-base">{isUser ? "You" : "Assistant"}</span>
+          <span className="text-sm text-muted-foreground font-medium">
             {formatDistanceToNow(message.timestamp, { addSuffix: true })}
           </span>
         </div>
         <div
           className={`${
-            isUser ? "bg-primary text-primary-foreground p-3 rounded-lg inline-block max-w-[80%]" : "text-foreground"
+            isUser 
+              ? "bg-gradient-primary text-white p-4 rounded-2xl inline-block max-w-[85%] shadow-lg" 
+              : "text-foreground p-4 bg-card rounded-2xl border-2 border-border/50 shadow-sm"
           }`}
         >
-          {isUser ? <p className="text-sm">{message.content}</p> : renderContentWithCitations(message.content)}
+          {isUser ? (
+            <p className="text-base leading-relaxed">{message.content}</p>
+          ) : (
+            <div className="space-y-3">
+              {renderContentWithCitations(message.content)}
+            </div>
+          )}
         </div>
       </div>
     </div>
