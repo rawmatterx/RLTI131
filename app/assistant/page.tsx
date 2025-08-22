@@ -16,7 +16,6 @@ import { SessionTimeline } from "@/src/components/assistant/SessionTimeline"
 import { ChatMessage } from "@/src/components/assistant/ChatMessage"
 import { ContextPanel } from "@/src/components/assistant/ContextPanel"
 import { CitationDrawer } from "@/src/components/assistant/CitationDrawer"
-import { useSearchParams } from "next/navigation"
 
 function AssistantPageInner() {
   const [message, setMessage] = useState("")
@@ -30,7 +29,6 @@ function AssistantPageInner() {
 
   const { currentAssessment } = usePatientStore()
   const { chatMessages, addChatMessage, timeline, ruleResults, clearSession } = useSessionStore()
-  const searchParams = useSearchParams()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -154,14 +152,15 @@ function AssistantPageInner() {
   }
 
   useEffect(() => {
-    const prefill = searchParams?.get('prefill') || ''
-    const autosend = searchParams?.get('autosend') === '1'
-    if (prefill) {
-      setMessage(prefill)
-      if (autosend) {
-        setTimeout(() => handleSendMessage(prefill), 0)
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const prefill = params.get('prefill') || ''
+      const autosend = params.get('autosend') === '1'
+      if (prefill) {
+        setMessage(prefill)
+        if (autosend) setTimeout(() => handleSendMessage(prefill), 0)
       }
-    }
+    } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
