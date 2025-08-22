@@ -227,7 +227,7 @@ function AssistantPageInner() {
                   <Bot className="h-4 w-4 text-accent" />
                   <span className="font-medium text-accent">Gemma‑3‑27B‑IT via OpenRouter</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-background/50 rounded-full">
+                <div className="flex items-center gap-2 px-3 py-1 bg-card rounded-full">
                   <span className={`h-2 w-2 rounded-full ${health?.available ? "bg-clinical-success animate-pulse" : "bg-clinical-error"}`} />
                   <span className="font-medium text-muted-foreground">
                     {healthLoading ? "Checking..." : health?.available ? "Online" : "Offline"}
@@ -236,16 +236,16 @@ function AssistantPageInner() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => clearSession()}>
+                <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => clearSession()}>
                   New Chat
                 </Button>
-                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => checkHealth()}>
+                <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => checkHealth()}>
                   {healthLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
                 </Button>
-                <Button variant="outline" size="sm" asChild className="bg-background/50 border-border/50 hover:bg-background">
+                <Button variant="outline" size="sm" asChild className="bg-card border-border hover:bg-card">
                   <Link href="/todos">Todos</Link>
                 </Button>
-                <Button variant="outline" size="sm" className="bg-background/50 border-border/50 hover:bg-background" onClick={() => insertQuickText("Summarize current patient context and key preparation steps.")}>
+                <Button variant="outline" size="sm" className="bg-card border-border hover:bg-card" onClick={() => insertQuickText("Summarize current patient context and key preparation steps.")}>
                   Quick Insert
                 </Button>
                 <Button
@@ -279,7 +279,7 @@ function AssistantPageInner() {
               </CardHeader>
 
               {/* Chat Messages */}
-              <CardContent className="flex-1 p-0 bg-gradient-to-b from-background/50 to-secondary/5">
+              <CardContent className="flex-1 p-0 bg-card">
                 <ScrollArea className="h-full px-6 py-2">
                   <div className="space-y-6 py-4">
                     {chatMessages.length === 0 && (
@@ -296,7 +296,7 @@ function AssistantPageInner() {
                             variant="secondary"
                             size="sm"
                             onClick={() => insertQuickText("What are the contraindications for I-131 therapy?")}
-                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300"
                           >
                             Contraindications
                           </Button>
@@ -304,7 +304,7 @@ function AssistantPageInner() {
                             variant="secondary"
                             size="sm"
                             onClick={() => insertQuickText("Explain the low-iodine diet preparation protocol.")}
-                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300"
                           >
                             Diet Protocol
                           </Button>
@@ -312,15 +312,15 @@ function AssistantPageInner() {
                             variant="secondary"
                             size="sm"
                             onClick={() => insertQuickText("What are the radiation safety requirements?")}
-                            className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300"
+                            className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300"
                           >
                             Safety Guidelines
                           </Button>
-                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Summarize the current assessment and key findings as concise bullet points with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Summarize Assessment</Button>
-                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Provide ATA-based risk stratification and brief rationale with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">ATA Risk & Rationale</Button>
-                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Recommend preparation pathway (withdrawal vs rhTSH) with brief reasons and references.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Prep Pathway</Button>
-                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("List discharge counseling points for the patient in concise bullet points with citations.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Discharge Points</Button>
-                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Outline follow-up plan and monitoring schedule as bullet points with references.")} className="bg-background/50 border hover:bg-accent/5 hover:border-accent/30 transition-all duration-300">Follow‑up Plan</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Summarize the current assessment and key findings as concise bullet points with citations.")} className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300">Summarize Assessment</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Provide ATA-based risk stratification and brief rationale with citations.")} className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300">ATA Risk & Rationale</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Recommend preparation pathway (withdrawal vs rhTSH) with brief reasons and references.")} className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300">Prep Pathway</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("List discharge counseling points for the patient in concise bullet points with citations.")} className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300">Discharge Points</Button>
+                          <Button variant="secondary" size="sm" onClick={() => insertQuickText("Outline follow-up plan and monitoring schedule as bullet points with references.")} className="bg-card border hover:bg-accent/10 hover:border-accent/30 transition-all duration-300">Follow‑up Plan</Button>
                         </div>
                       </div>
                     )}
