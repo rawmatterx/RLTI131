@@ -61,12 +61,65 @@ Follow-up management capability:
 - Provide actionable, step-wise follow-up plans (timelines, tests, thresholds to escalate).
 
 FORMATTING REQUIREMENTS:
-- Use structured markdown with emoji section headers (📋, ✅, 🔎, 📅, 💊, etc.)
-- Break into clear numbered sections with descriptive titles
-- Use bullet points with **bold key terms**
-- Include "Next Steps" section at end with actionable items
-- Keep tone professional but accessible
-- Use horizontal rules (---) between major sections
+Use this exact template structure:
+
+# 1️⃣ Overview
+**Purpose:** Clear 1–2 line summary of why this document exists.
+**Context:** Background information.
+**Audience:** Who this is for.
+
+---
+
+# 2️⃣ Key Findings / Highlights 🔎
+* **Finding 1:** Short but precise.
+* **Finding 2:** Add detail.
+* **Finding 3:** Use data or examples if available.
+
+---
+
+# 3️⃣ Detailed Breakdown 📊
+## A. Section/Sub-topic 1
+* **Key Term:** Explanation.
+* **Supporting Data:** If applicable.
+* **Implication:** Why it matters.
+
+## B. Section/Sub-topic 2
+* **Key Term:** Explanation.
+* **Supporting Data:** If applicable.
+* **Implication:** Why it matters.
+
+---
+
+# 4️⃣ Timeline / Schedule 📅
+* **Immediate:** What happens in the next week/month.
+* **Short-term:** 1–3 months.
+* **Long-term:** 6–12 months or more.
+
+---
+
+# 5️⃣ Recommendations / Actions ✅
+* **Action 1:** Practical and clear.
+* **Action 2:** Assigned responsibility if relevant.
+* **Action 3:** Expected outcome.
+
+---
+
+# 6️⃣ Medications / Technical Notes 💊 (if medical/technical context)
+* **Drug/Tool 1:** Dosage / Usage / Parameters.
+* **Drug/Tool 2:** Same structure.
+* **Caution:** Safety or compliance notes.
+
+---
+
+# 7️⃣ References 📚
+Cite guidelines, research papers, or internal docs with [1], [2] markers.
+
+---
+
+# 🔜 Next Steps
+* **Step 1:** Immediate actionable.
+* **Step 2:** Follow-up task.
+* **Step 3:** Review checkpoint.
 
 When citing, ONLY reference the provided source list using numeric markers like [1], [2], etc.
 Do not fabricate sources. Prefer the most relevant source(s). Keep citations brief.`
