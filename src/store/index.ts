@@ -8,17 +8,21 @@ interface PatientState {
   updateAssessment: (updates: Partial<Assessment>) => void
   clearAssessment: () => void
   setRiskFactors: (factors: RiskFactors) => void
+  resetToken: number
+  triggerReset: () => void
 }
 
 export const usePatientStore = create<PatientState>()(
   persist(
     (set) => ({
       currentAssessment: {},
+      resetToken: 0,
       updateAssessment: (updates) =>
         set((state) => ({
           currentAssessment: { ...state.currentAssessment, ...updates },
         })),
-      clearAssessment: () => set({ currentAssessment: {} }),
+      clearAssessment: () => set({ currentAssessment: {}, resetToken: Date.now() }),
+      triggerReset: () => set((state) => ({ resetToken: Date.now() })),
       setRiskFactors: (factors) =>
         set((state) => ({ currentAssessment: { ...state.currentAssessment, risk: factors } as any })),
     }),

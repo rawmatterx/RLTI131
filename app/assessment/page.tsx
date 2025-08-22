@@ -40,7 +40,7 @@ export default function AssessmentPage() {
   const [showExplainDrawer, setShowExplainDrawer] = useState(false)
   const [savedAt, setSavedAt] = useState("—")
   const [isRunningRules, setIsRunningRules] = useState(false)
-  const { currentAssessment, updateAssessment } = usePatientStore()
+  const { currentAssessment, updateAssessment, resetToken } = usePatientStore()
   const { setRiskFactors } = usePatientStore.getState() as any
   const { ruleResults, setRuleResults, addTimelineEvent } = useSessionStore()
   const { toast } = useToast()
@@ -112,9 +112,10 @@ export default function AssessmentPage() {
 
   const handleClear = () => {
     // Reset store completely
-    const { clearAssessment } = usePatientStore.getState()
+    const { clearAssessment, triggerReset } = usePatientStore.getState()
     clearAssessment()
-    // Reset current step
+    triggerReset() // Signal to child forms to reset
+    // Reset current step and UI state
     setCurrentStep(0)
     setShowRuleResults(false)
     setRuleResults([])
@@ -144,7 +145,7 @@ export default function AssessmentPage() {
       case "safety":
         return <SafetyStep />
       case "risk":
-        return <RiskStep />
+        return <RiskStep resetToken={resetToken} />
       default:
         return <div>Step not found</div>
     }

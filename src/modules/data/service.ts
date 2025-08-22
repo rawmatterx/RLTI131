@@ -28,7 +28,17 @@ export const dataService = {
     if (supabaseUrl && supabaseKey) {
       const { createClient } = await import('@supabase/supabase-js')
       const supabase = createClient(supabaseUrl, supabaseKey)
-      const payload = { ...assessment, updatedAt: new Date().toISOString() }
+      const assessmentId = assessment.id || `asm-${Date.now()}`
+      const payload = { 
+        id: assessmentId,
+        patient_data: JSON.stringify(assessment.patient || {}),
+        clinical_data: JSON.stringify(assessment.clinical || {}),
+        labs_data: JSON.stringify(assessment.labs || {}),
+        risk_data: JSON.stringify((assessment as any).risk || {}),
+        contraindications: assessment.contraindications || [],
+        medications: assessment.medications || '',
+        updated_at: new Date().toISOString()
+      }
       const { data, error } = await supabase.from('assessments').upsert(payload).select('id').single()
       if (error) throw error
       return { id: data.id, saved: true }
