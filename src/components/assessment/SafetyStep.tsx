@@ -6,13 +6,24 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { usePatientStore } from "@/src/store"
 
-export function SafetyStep() {
+export function SafetyStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
   const [safety, setSafety] = useState({
     inpatient: currentAssessment.safety?.inpatient || false,
     isolationReady: currentAssessment.safety?.isolationReady || false,
     homeEnvironmentNotes: currentAssessment.safety?.homeEnvironmentNotes || "",
   })
+
+  // Reset when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      setSafety({
+        inpatient: false,
+        isolationReady: false,
+        homeEnvironmentNotes: "",
+      })
+    }
+  }, [resetToken])
 
   useEffect(() => {
     updateAssessment({ safety })

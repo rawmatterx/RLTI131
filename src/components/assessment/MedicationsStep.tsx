@@ -7,12 +7,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { usePatientStore } from "@/src/store"
 import type { Contraindication } from "@/src/types"
 
-export function MedicationsStep() {
+export function MedicationsStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
   const [contraindications, setContraindications] = useState<Contraindication[]>(
     currentAssessment.contraindications || [],
   )
   const [medications, setMedications] = useState("")
+
+  // Reset when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      setContraindications([])
+      setMedications("")
+    }
+  }, [resetToken])
 
   useEffect(() => {
     updateAssessment({

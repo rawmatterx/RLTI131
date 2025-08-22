@@ -19,7 +19,7 @@ const demographicsSchema = z.object({
 
 type DemographicsForm = z.infer<typeof demographicsSchema>
 
-export function DemographicsStep() {
+export function DemographicsStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
 
   const {
@@ -27,6 +27,7 @@ export function DemographicsStep() {
     handleSubmit,
     setValue,
     control,
+    reset,
     formState: { errors },
   } = useForm<DemographicsForm>({
     resolver: zodResolver(demographicsSchema),
@@ -37,6 +38,19 @@ export function DemographicsStep() {
       sex: currentAssessment.patient?.sex || undefined,
     },
   })
+
+  // Reset form when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      reset({
+        name: "",
+        mrn: "",
+        dob: "",
+        sex: undefined,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetToken])
 
   // Stable patient id across renders/session
   const patientIdRef = useRef<string>(currentAssessment.patient?.id || crypto.randomUUID())

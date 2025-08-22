@@ -131,19 +131,19 @@ export default function AssessmentPage() {
   const renderStep = () => {
     switch (steps[currentStep].id) {
       case "demographics":
-        return <DemographicsStep />
+        return <DemographicsStep resetToken={resetToken} />
       case "clinical":
-        return <ClinicalStep />
+        return <ClinicalStep resetToken={resetToken} />
       case "labs":
-        return <LabsStep />
+        return <LabsStep resetToken={resetToken} />
       case "imaging":
-        return <ImagingStep />
+        return <ImagingStep resetToken={resetToken} />
       case "medications":
-        return <MedicationsStep />
+        return <MedicationsStep resetToken={resetToken} />
       case "preparation":
-        return <PreparationStep />
+        return <PreparationStep resetToken={resetToken} />
       case "safety":
-        return <SafetyStep />
+        return <SafetyStep resetToken={resetToken} />
       case "risk":
         return <RiskStep resetToken={resetToken} />
       default:
@@ -291,11 +291,21 @@ export default function AssessmentPage() {
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
                 {currentStep === steps.length - 1 && (
-                  <Link href={{ pathname: '/assistant', query: { autosend: '1', prefill: encodeURIComponent('Please provide a detailed breakdown of the assessment and ATA-based recommendations for this patient.') } }}>
-                    <Button size="lg" className="bg-primary hover:bg-primary/90 transition-all duration-300 px-8 text-primary-foreground font-semibold">
-                      Complete & Send to Assistant
+                  <div className="flex gap-3">
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      className="bg-background border-2 hover:bg-accent/5 transition-all duration-300 px-8 font-semibold"
+                      onClick={handleSave}
+                    >
+                      Save Patient Data
                     </Button>
-                  </Link>
+                    <Link href={{ pathname: '/assistant', query: { autosend: '1', prefill: encodeURIComponent('Please provide a detailed breakdown of the assessment and ATA-based recommendations for this patient.') } }}>
+                      <Button size="lg" className="bg-primary hover:bg-primary/90 transition-all duration-300 px-8 text-primary-foreground font-semibold">
+                        Complete & Send to Assistant
+                      </Button>
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

@@ -18,13 +18,14 @@ const clinicalSchema = z.object({
 
 type ClinicalForm = z.infer<typeof clinicalSchema>
 
-export function ClinicalStep() {
+export function ClinicalStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
 
   const {
     register,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ClinicalForm>({
     resolver: zodResolver(clinicalSchema),
@@ -34,6 +35,18 @@ export function ClinicalStep() {
       thyroidectomy: currentAssessment.clinical?.thyroidectomy || undefined,
     },
   })
+
+  // Reset form when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      reset({
+        diagnosis: "",
+        priorI131: false,
+        thyroidectomy: undefined,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetToken])
 
   const priorI131 = watch("priorI131")
   const thyroidectomy = watch("thyroidectomy")

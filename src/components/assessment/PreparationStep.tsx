@@ -7,13 +7,24 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { usePatientStore } from "@/src/store"
 
-export function PreparationStep() {
+export function PreparationStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
   const [prep, setPrep] = useState({
     path: currentAssessment.prep?.path || null,
     startDate: currentAssessment.prep?.startDate || "",
     lowIodineDiet: currentAssessment.prep?.lowIodineDiet || false,
   })
+
+  // Reset when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      setPrep({
+        path: null,
+        startDate: "",
+        lowIodineDiet: false,
+      })
+    }
+  }, [resetToken])
 
   useEffect(() => {
     updateAssessment({ prep })

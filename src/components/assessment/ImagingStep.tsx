@@ -6,13 +6,24 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { usePatientStore } from "@/src/store"
 
-export function ImagingStep() {
+export function ImagingStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
   const [imagingFlags, setImagingFlags] = useState({
     metastatic: false,
     remnant: false,
     notes: "",
   })
+
+  // Reset when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      setImagingFlags({
+        metastatic: false,
+        remnant: false,
+        notes: "",
+      })
+    }
+  }, [resetToken])
 
   useEffect(() => {
     updateAssessment({

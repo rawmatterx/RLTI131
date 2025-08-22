@@ -49,18 +49,27 @@ const labSchema = z.object({
 
 type LabForm = z.input<typeof labSchema>
 
-export function LabsStep() {
+export function LabsStep({ resetToken }: { resetToken?: number }) {
   const { currentAssessment, updateAssessment } = usePatientStore()
 
   const {
     register,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<LabForm>({
     resolver: zodResolver(labSchema),
     defaultValues: currentAssessment.labs || {},
   })
+
+  // Reset form when resetToken changes
+  useEffect(() => {
+    if (resetToken) {
+      reset({})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetToken])
 
   // Normalize form values (which may have undefined unit before defaults apply)
   const normalizeLabs = (values: LabForm): Labs => {
