@@ -1,0 +1,12 @@
+
+Env (.env.local):
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...  # server-only
+
+Steps:
+1) Run supabase/schema.sql then supabase/seed.sql in Supabase SQL Editor.
+2) Start app; /api/patients supports q, status, page, pageSize.
+3) /patients auto-fetches if no data prop supplied.
+4) Export CSV button downloads filtered rows.
+Security: For production, tighten RLS; avoid broad write policy.
