@@ -129,7 +129,7 @@ export function ClinicalStep({ resetToken }: { resetToken?: number }) {
   }, [resetToken, reset])
 
   useEffect(() => {
-    const subscription = control.watch((value) => {
+    const subscription = (control as any).watch?.((value: any) => {
       const updatedClinical = {
         ...value,
         previousRAI: {
@@ -139,7 +139,7 @@ export function ClinicalStep({ resetToken }: { resetToken?: number }) {
       }
       updateAssessment({ clinical: updatedClinical as any })
     })
-    return () => subscription.unsubscribe()
+    return () => subscription?.unsubscribe?.()
   }, [control, updateAssessment, raiTreatments])
 
   const hasReceivedRAI = useWatch({ control, name: 'previousRAI.hasReceived' })

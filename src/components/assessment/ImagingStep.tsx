@@ -82,10 +82,10 @@ export function ImagingStep({ resetToken }: { resetToken?: number }) {
   }, [resetToken, reset])
 
   useEffect(() => {
-    const subscription = control.watch((value) => {
+    const subscription = (control as any).watch?.((value: any) => {
       updateAssessment({ imaging: value as any })
     })
-    return () => subscription.unsubscribe()
+    return () => subscription?.unsubscribe?.()
   }, [control, updateAssessment])
 
   return (
