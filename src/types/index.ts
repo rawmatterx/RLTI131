@@ -21,6 +21,103 @@ export type Clinical = {
   diagnosis: string
   priorI131?: boolean
   thyroidectomy?: "total" | "near_total" | "partial" | "none"
+  
+  // Surgical Procedure Details
+  surgicalInformation?: {
+    procedure?: "no_sx" | "nodulectomy" | "HT" | "STT" | "TT" | "other"
+    hospital?: string
+    place?: string
+    date?: string
+    otherProcedure?: string
+  }
+  
+  // Node Information
+  nodeInformation?: {
+    present?: boolean
+    nodeSampling?: boolean
+    fnd?: boolean // Functional Neck Dissection
+    rnd?: boolean // Radical Neck Dissection
+    other?: string
+  }
+  
+  // Invasion Details
+  invasion?: {
+    capsular?: boolean
+    vascular?: boolean
+    other?: boolean
+    nodule?: string
+    otherLobe?: string
+  }
+  
+  // Retrosternal Extension
+  retrosternalExtension?: {
+    esophagus?: boolean
+    carotids?: boolean
+    muscle?: boolean
+    jugular?: boolean
+    trachea?: boolean
+    other?: boolean
+  }
+  
+  // Histopathological Examination
+  histopathology?: {
+    hpeNo?: string
+    type?: "papillary" | "hurthle_cell" | "medullary" | "follicular" | "insular" | "anaplastic"
+    otherFindings?: {
+      nodalStatus?: boolean
+      tumorSize?: string
+      immunostaining?: boolean
+    }
+  }
+  
+  // Previous RAI Treatment
+  previousRAI?: {
+    hasReceived?: boolean
+    treatments?: Array<{
+      date?: string
+      dose?: number
+      indication?: "remnant_ablation" | "lobar_ablation" | "neck_nodes" | "pulm_mets" | "skeletal_mets" | "other"
+      hospital?: string
+      notes?: string
+    }>
+    cumulativeDose?: number
+    totalTreatments?: number
+  }
+  
+  // Family History
+  familyHistory?: {
+    thyroidCancer?: boolean
+    goiter?: boolean
+    hypo?: boolean
+    hyper?: boolean
+    brother?: boolean
+    sister?: boolean
+    other?: boolean
+  }
+  
+  // Past History
+  pastHistory?: {
+    affectedRelation?: string
+    noncontributory?: boolean
+    hcAbdominal?: boolean
+    hcHeadNeck?: boolean
+    hcAnother?: boolean
+    hcTBDMHTBAEP?: boolean
+    drugAllergy?: boolean
+  }
+  
+  // Investigation Details
+  investigations?: {
+    tlc?: boolean
+    esr?: boolean
+    bunUreaCreatinine?: boolean
+    lfT?: boolean
+    calcifications?: boolean
+    fiAc?: boolean
+    us?: boolean
+    ctScan?: boolean
+    cxr?: boolean
+  }
 }
 
 export type Prep = {
@@ -39,6 +136,47 @@ export type Imaging = {
   metastatic?: boolean
   remnant?: boolean
   notes?: string
+  
+  // Nuclear Medicine Investigation
+  nuclearMedicine?: {
+    wbs?: {
+      remnant?: boolean
+      node?: boolean
+      functional?: boolean
+      nonFunction?: boolean
+      pulmonary?: boolean
+      liver?: boolean
+      skeletal?: boolean
+      brain?: boolean
+      other?: boolean
+    }
+    dose?: string
+    tg?: string
+    uptake?: string
+    raiu?: {
+      twentyFourHour?: boolean
+      fortyEightHour?: boolean
+    }
+    ptScan?: {
+      additionalLesion?: boolean
+      pulmonary?: boolean
+      skeletal?: boolean
+      both?: boolean
+      node?: boolean
+      other?: boolean
+    }
+  }
+  
+  // Staging Information
+  staging?: {
+    clinical?: "I" | "II" | "III" | "IV"
+    tnm?: "I" | "II" | "III" | "IV"
+    postOpEvents?: {
+      vocalCordPalsy?: boolean
+      palpableMass?: boolean
+      hypoparathyroidism?: boolean
+    }
+  }
 }
 
 export type Labs = Partial<
