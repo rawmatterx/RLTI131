@@ -108,6 +108,20 @@ export type RiskFactors = {
   primaryTumorSizeCm?: number
   marginStatus?: 'negative' | 'microscopic' | 'positive'
   tallCellPercent?: number
+  
+  // ATA 2025 molecular markers
+  brafMutation?: boolean
+  rasMutation?: boolean
+  retPtcRearrangement?: boolean
+  molecularRiskScore?: 'low' | 'intermediate' | 'high'
+  
+  // ATA 2025 ultrasound-based features  
+  suspiciousUSFeatures?: boolean
+  centralLNImaging?: boolean
+  
+  // ATA 2025 follow-up stratification
+  followUpRisk?: 'low' | 'intermediate' | 'high'
+  postSurgicalRisk?: 'excellent' | 'biochemical' | 'structural'
 }
 
 export type Protocol = {

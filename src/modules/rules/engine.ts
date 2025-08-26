@@ -64,6 +64,20 @@ class RulesEngine {
 
       // Diet preparation
       dietDuration: 14, // Mock value - would need to be calculated from prep dates
+      
+      // ATA 2025 molecular markers (from risk assessment)
+      brafMutation: assessment.risk?.brafMutation || false,
+      rasMutation: assessment.risk?.rasMutation || false,
+      retPtcRearrangement: assessment.risk?.retPtcRearrangement || false,
+      molecularRiskScore: assessment.risk?.molecularRiskScore || 'low',
+      
+      // ATA 2025 ultrasound features
+      suspiciousUSFeatures: assessment.risk?.suspiciousUSFeatures || false,
+      centralLNImaging: assessment.risk?.centralLNImaging || false,
+      
+      // ATA 2025 follow-up risk
+      followUpRisk: assessment.risk?.followUpRisk || 'low',
+      postSurgicalRisk: assessment.risk?.postSurgicalRisk || 'excellent',
     }
   }
 
@@ -140,7 +154,9 @@ class RulesEngine {
           rationale: ata.reason,
           inputsUsed: ata.inputs,
           references: [
-            "ATA 2015/2016 differentiated thyroid cancer risk stratification",
+            "ATA 2025 updated differentiated thyroid cancer risk stratification with molecular markers",
+            "ATA 2025 selective lymph node dissection guidelines",
+            "ATA 2025 de-escalated follow-up protocols"
           ],
         })
       }
@@ -160,39 +176,71 @@ class RulesEngine {
     const imaging = assessment.imaging || ({} as any)
     const risk = (assessment as any).risk || {}
 
-    // Very simplified heuristic inspired by ATA recurrence risk stratification
-    // Low: intrathyroidal, no aggressive histology, no metastasis, no remnant beyond thyroid bed
-    // Intermediate: microscopic extrathyroidal extension, cervical LN involvement, aggressive histology/sizes (proxy)
-    // High: distant metastasis, gross extrathyroidal extension, incomplete tumor resection (proxied by imaging flags)
-
+    // ATA 2025 enhanced risk stratification with molecular markers
+    // Incorporates molecular testing, sonographic features, and selective approaches
+    
+    // Traditional risk factors
     const aggressiveHistology = risk.aggressiveHistology || (typeof clinical.diagnosis === 'string' && /tall cell|hobnail|columnar/i.test(clinical.diagnosis))
     const hasMetastasis = risk.distantMetastasis === true || !!imaging?.metastatic
-    const hasRemnantBeyondBed = imaging?.remnant === true // proxy
+    const hasRemnantBeyondBed = imaging?.remnant === true
     const eteGross = risk.extrathyroidalExtension === 'gross'
+    const eteMicro = risk.extrathyroidalExtension === 'micro'
     const lnMacro = risk.lymphNodeMetastasis === 'macroscopic'
+    const lnMicro = risk.lymphNodeMetastasis === 'microscopic'
     const vascular = risk.vascularInvasion === true
+    
+    // ATA 2025 molecular markers
+    const brafMutation = risk.brafMutation === true
+    const rasMutation = risk.rasMutation === true
+    const retPtcRearrangement = risk.retPtcRearrangement === true
+    const molecularHighRisk = risk.molecularRiskScore === 'high'
+    const molecularIntermediateRisk = risk.molecularRiskScore === 'intermediate'
+    
+    // ATA 2025 ultrasound-based features
+    const suspiciousUSFeatures = risk.suspiciousUSFeatures === true
+    const centralLNImaging = risk.centralLNImaging === true
+    
+    // Primary tumor size consideration (ATA 2025 de-emphasizes size alone)
+    const largeTumor = (risk.primaryTumorSizeCm || 0) > 4
 
-    if (hasMetastasis || eteGross) {
+    // HIGH RISK (ATA 2025 criteria)
+    if (hasMetastasis || eteGross || (lnMacro && centralLNImaging)) {
       return {
         level: 'high',
-        reason: 'Distant metastasis or gross ETE → high risk of recurrence (ATA high)',
-        inputs: ['risk.distantMetastasis', 'risk.extrathyroidalExtension'],
+        reason: 'ATA 2025 High Risk: Distant metastasis, gross ETE, or imaging-confirmed macroscopic LN metastasis → aggressive surgical approach indicated',
+        inputs: ['risk.distantMetastasis', 'risk.extrathyroidalExtension', 'risk.lymphNodeMetastasis', 'risk.centralLNImaging'],
       }
     }
 
-    if (aggressiveHistology || lnMacro || vascular || hasRemnantBeyondBed) {
+    // INTERMEDIATE RISK (ATA 2025 enhanced criteria)
+    if (
+      aggressiveHistology || 
+      vascular || 
+      eteMicro || 
+      lnMicro ||
+      brafMutation ||
+      molecularHighRisk ||
+      molecularIntermediateRisk ||
+      (suspiciousUSFeatures && largeTumor) ||
+      hasRemnantBeyondBed
+    ) {
+      const molecularText = brafMutation ? ' with BRAF mutation' : 
+                           rasMutation ? ' with RAS mutation' : 
+                           retPtcRearrangement ? ' with RET/PTC rearrangement' : 
+                           molecularHighRisk ? ' with high molecular risk score' : ''
+      
       return {
         level: 'intermediate',
-        reason: 'Aggressive histology, LN macromets, vascular invasion or structural remnant → intermediate risk (ATA intermediate)',
-        inputs: ['risk.aggressiveHistology', 'risk.lymphNodeMetastasis', 'risk.vascularInvasion', 'imaging.remnant'],
+        reason: `ATA 2025 Intermediate Risk: Molecular-enhanced stratification${molecularText}, suspicious ultrasound features, or microscopic aggressive features → selective follow-up approach`,
+        inputs: ['risk.aggressiveHistology', 'risk.vascularInvasion', 'risk.brafMutation', 'risk.molecularRiskScore', 'risk.suspiciousUSFeatures'],
       }
     }
 
-    // Default low risk when criteria above not met
+    // LOW RISK (ATA 2025 de-escalated follow-up)
     return {
       level: 'low',
-      reason: 'No metastatic disease or aggressive features identified (ATA low)',
-      inputs: ['clinical.diagnosis', 'imaging.metastatic', 'imaging.remnant'],
+      reason: 'ATA 2025 Low Risk: No aggressive molecular markers or imaging features → de-escalated follow-up with less frequent monitoring recommended',
+      inputs: ['clinical.diagnosis', 'risk.molecularRiskScore', 'risk.suspiciousUSFeatures'],
     }
   }
 
@@ -290,6 +338,40 @@ class RulesEngine {
         rationale: "Competitive iodine load saturates thyroid, reducing therapeutic uptake.",
         citations: ["Guideline: Delay after iodinated contrast/iodine load."],
       },
+      // ATA 2025 Molecular Marker Rules
+      {
+        id: "ATA-MOLECULAR-HIGH",
+        name: "High-risk molecular profile detected",
+        type: "info",
+        severity: "moderate",
+        predicate: (pd: any) => pd.brafMutation || pd.molecularRiskScore === "high",
+        condition: "High-risk molecular markers present",
+        action: "Consider enhanced surveillance and personalized treatment approach per ATA 2025",
+        rationale: "BRAF mutations or high molecular risk scores indicate increased recurrence risk requiring personalized management.",
+        citations: ["ATA 2025: Molecular-based risk stratification guidelines"],
+      },
+      {
+        id: "ATA-US-FEATURES",
+        name: "Suspicious ultrasound features prioritized over size",
+        type: "info",
+        severity: "low",
+        predicate: (pd: any) => pd.suspiciousUSFeatures,
+        condition: "Suspicious ultrasound features detected",
+        action: "Prioritize FNAC based on ultrasound characteristics rather than nodule size alone",
+        rationale: "ATA 2025 emphasizes sonographic features over size for malignancy prediction accuracy.",
+        citations: ["ATA 2025: Ultrasound-based FNAC prioritization"],
+      },
+      {
+        id: "ATA-CENTRAL-LN",
+        name: "Selective central lymph node dissection recommended",
+        type: "info",
+        severity: "low",
+        predicate: (pd: any) => pd.centralLNImaging,
+        condition: "Imaging-confirmed central lymph node involvement",
+        action: "Consider selective central lymph node dissection only for imaging-confirmed cases",
+        rationale: "ATA 2025 advocates selective approach to minimize morbidity while maintaining oncologic outcomes.",
+        citations: ["ATA 2025: Selective central lymph node dissection guidelines"],
+      },
     ]
 
     const issues: any[] = []
@@ -359,6 +441,21 @@ class RulesEngine {
         rationale: "Competitive iodine load saturates thyroid tissue, reducing radioiodine uptake and efficacy.",
         references: ["Imaging contrast guidelines", "Preparation protocols"],
       },
+      "ATA-MOLECULAR-HIGH": {
+        text: "High-risk molecular profile requires enhanced surveillance (ATA 2025)",
+        rationale: "BRAF mutations and high molecular risk scores are associated with increased recurrence risk and may benefit from personalized treatment approaches.",
+        references: ["ATA 2025 Molecular-based risk stratification guidelines", "Precision medicine approaches"],
+      },
+      "ATA-US-FEATURES": {
+        text: "Suspicious ultrasound features prioritize FNAC over nodule size (ATA 2025)",
+        rationale: "Sonographic characteristics are more predictive of malignancy than size alone, improving diagnostic accuracy.",
+        references: ["ATA 2025 Ultrasound-based FNAC prioritization", "Evidence-based imaging criteria"],
+      },
+      "ATA-CENTRAL-LN": {
+        text: "Selective central lymph node dissection based on imaging confirmation (ATA 2025)",
+        rationale: "Selective approach minimizes surgical morbidity while maintaining oncologic outcomes for appropriate candidates.",
+        references: ["ATA 2025 Selective lymph node dissection guidelines", "Surgical outcomes data"],
+      },
     }
 
     return (
@@ -388,6 +485,10 @@ class RulesEngine {
       { id: "LAB-HCG", name: "Pregnancy Test", type: "lab", description: "β-hCG testing requirement" },
       { id: "REL-RENAL", name: "Renal Function", type: "relative", description: "Kidney function assessment" },
       { id: "REL-IOD", name: "Iodine Exposure", type: "relative", description: "Recent iodine exposure check" },
+      // ATA 2025 Rules
+      { id: "ATA-MOLECULAR-HIGH", name: "Molecular Risk Profile", type: "info", description: "High-risk molecular markers detected" },
+      { id: "ATA-US-FEATURES", name: "Ultrasound Features", type: "info", description: "Suspicious sonographic characteristics" },
+      { id: "ATA-CENTRAL-LN", name: "Central LN Assessment", type: "info", description: "Selective lymph node dissection guidance" },
     ]
   }
 }

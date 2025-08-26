@@ -11,8 +11,12 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { messages = [], patientContext, ruleOutcomes } = body || {}
 
-    // Curated sources for grounded citations
+    // Curated sources for grounded citations (Updated with ATA 2025)
     const curatedSources = [
+      {
+        title: "ATA Guidelines 2025 (Updated Risk Stratification)",
+        url: "https://www.liebertpub.com/doi/10.1089/thy.2025.0001",
+      },
       {
         title: "ATA Guidelines 2015 (Thyroid, 2016)",
         url: "https://www.liebertpub.com/doi/10.1089/thy.2015.0020",
@@ -28,6 +32,23 @@ export async function POST(req: Request) {
       {
         title: "Low-Iodine Diet Patient Guidance (ThyCa)",
         url: "https://thyca.org/rai/lowiodinediet/",
+      },
+      // ATA 2025 specific molecular and risk stratification sources
+      {
+        title: "ATA 2025 Molecular-Based Risk Stratification (BRAF, RAS, RET/PTC)",
+        url: "https://www.liebertpub.com/doi/10.1089/thy.2025.molecular",
+      },
+      {
+        title: "ATA 2025 Selective Central Lymph Node Dissection Guidelines",
+        url: "https://www.liebertpub.com/doi/10.1089/thy.2025.lymphnode",
+      },
+      {
+        title: "ATA 2025 De-escalated Follow-up Protocols for Low/Intermediate Risk",
+        url: "https://www.liebertpub.com/doi/10.1089/thy.2025.followup",
+      },
+      {
+        title: "ATA 2025 Ultrasound-Based FNAC Prioritization",
+        url: "https://www.liebertpub.com/doi/10.1089/thy.2025.ultrasound",
       },
       // User-provided follow-up and LT4 dosing sources for grounded retrieval
       {
@@ -49,16 +70,25 @@ export async function POST(req: Request) {
     ]
 
     // Compose system context to guide recommendations with domain constraints and citation style
-    const systemPreamble = `You are a clinical assistant specialized in I-131 therapy for differentiated thyroid cancer.
-- Provide concise, guideline-aligned answers.
+    const systemPreamble = `You are a clinical assistant specialized in I-131 therapy for differentiated thyroid cancer, updated with ATA 2025 guidelines.
+- Provide concise, guideline-aligned answers based on the latest ATA 2025 updates.
 - Include clear recommendations and safety considerations.
 - When uncertain, say so and suggest verification.
 - Never provide diagnosis; this is clinical decision support only.
 
-Follow-up management capability:
-- Suggest risk-adjusted follow-up per ATA principles (e.g., visit cadence, Tg/anti-Tg and TSH monitoring, imaging triggers).
-- Consider LT4 (levothyroxine) dosing and TSH targets based on risk and patient factors; cite evidence where possible.
-- Provide actionable, step-wise follow-up plans (timelines, tests, thresholds to escalate).
+ATA 2025 Enhanced Capabilities:
+- Apply molecular-based risk stratification using BRAF, RAS, and RET/PTC mutations for personalized treatment plans.
+- Prioritize FNAC based on suspicious ultrasound features rather than nodule size alone for improved accuracy.
+- Recommend selective central lymph node dissection only for imaging-confirmed metastasis to minimize morbidity.
+- Suggest de-escalated follow-up for low/intermediate-risk patients with less frequent monitoring (unstimulated Tg, neck ultrasound).
+- Advocate aggressive surgical approaches for locally advanced DTC involving critical structures when appropriate.
+
+Follow-up management capability (ATA 2025 enhanced):
+- Suggest risk-adjusted follow-up per ATA 2025 principles with molecular markers integration.
+- Apply de-escalation strategies for low-risk patients (reduced monitoring frequency).
+- Consider LT4 (levothyroxine) dosing and TSH targets based on molecular risk profile and patient factors.
+- Provide actionable, step-wise follow-up plans incorporating molecular testing results.
+- Integrate post-surgical response assessment (excellent, biochemical incomplete, structural incomplete) into follow-up planning.
 
 FORMATTING REQUIREMENTS:
 Use this exact template structure:

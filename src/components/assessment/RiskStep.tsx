@@ -19,6 +19,20 @@ const riskSchema = z.object({
   primaryTumorSizeCm: z.number().optional(),
   marginStatus: z.enum(["negative", "microscopic", "positive"]).optional(),
   tallCellPercent: z.number().optional(),
+  
+  // ATA 2025 molecular markers
+  brafMutation: z.boolean().optional(),
+  rasMutation: z.boolean().optional(),
+  retPtcRearrangement: z.boolean().optional(),
+  molecularRiskScore: z.enum(["low", "intermediate", "high"]).optional(),
+  
+  // ATA 2025 ultrasound-based features  
+  suspiciousUSFeatures: z.boolean().optional(),
+  centralLNImaging: z.boolean().optional(),
+  
+  // ATA 2025 follow-up stratification
+  followUpRisk: z.enum(["low", "intermediate", "high"]).optional(),
+  postSurgicalRisk: z.enum(["excellent", "biochemical", "structural"]).optional(),
 })
 
 type RiskForm = z.infer<typeof riskSchema>
@@ -127,6 +141,91 @@ export function RiskStep({ resetToken }: { resetToken?: number }) {
         <div className="space-y-1">
           <Label className="text-sm" htmlFor="tcp">Tall cell percentage (%)</Label>
           <Input id="tcp" type="number" step="1" defaultValue={useWatch({ control, name: 'tallCellPercent' }) as any} onChange={e => setValue('tallCellPercent', parseFloat(e.target.value))} />
+        </div>
+      </div>
+
+      {/* ATA 2025 Molecular Markers Section */}
+      <div className="mt-8 p-4 border rounded-lg bg-blue-50">
+        <h3 className="text-lg font-semibold mb-4 text-blue-800">ATA 2025 Molecular Markers</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center gap-2">
+            <Checkbox id="braf" checked={!!useWatch({ control, name: 'brafMutation' })} onCheckedChange={v => setValue('brafMutation', v as boolean)} />
+            <Label htmlFor="braf" className="text-sm">BRAF mutation</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="ras" checked={!!useWatch({ control, name: 'rasMutation' })} onCheckedChange={v => setValue('rasMutation', v as boolean)} />
+            <Label htmlFor="ras" className="text-sm">RAS mutation</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="ret" checked={!!useWatch({ control, name: 'retPtcRearrangement' })} onCheckedChange={v => setValue('retPtcRearrangement', v as boolean)} />
+            <Label htmlFor="ret" className="text-sm">RET/PTC rearrangement</Label>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm">Molecular risk score</Label>
+            <Select value={useWatch({ control, name: 'molecularRiskScore' })} onValueChange={(v) => setValue('molecularRiskScore', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select molecular risk" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* ATA 2025 Ultrasound Features Section */}
+      <div className="mt-6 p-4 border rounded-lg bg-green-50">
+        <h3 className="text-lg font-semibold mb-4 text-green-800">ATA 2025 Ultrasound-Based Assessment</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center gap-2">
+            <Checkbox id="sus-us" checked={!!useWatch({ control, name: 'suspiciousUSFeatures' })} onCheckedChange={v => setValue('suspiciousUSFeatures', v as boolean)} />
+            <Label htmlFor="sus-us" className="text-sm">Suspicious ultrasound features (prioritize over size)</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="central-ln" checked={!!useWatch({ control, name: 'centralLNImaging' })} onCheckedChange={v => setValue('centralLNImaging', v as boolean)} />
+            <Label htmlFor="central-ln" className="text-sm">Imaging-confirmed central LN involvement</Label>
+          </div>
+        </div>
+      </div>
+
+      {/* ATA 2025 Follow-up Strategy Section */}
+      <div className="mt-6 p-4 border rounded-lg bg-yellow-50">
+        <h3 className="text-lg font-semibold mb-4 text-yellow-800">ATA 2025 Follow-up Stratification</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Label className="text-sm">Follow-up risk category</Label>
+            <Select value={useWatch({ control, name: 'followUpRisk' })} onValueChange={(v) => setValue('followUpRisk', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select follow-up risk" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low (de-escalated monitoring)</SelectItem>
+                <SelectItem value="intermediate">Intermediate (selective approach)</SelectItem>
+                <SelectItem value="high">High (intensive follow-up)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm">Post-surgical risk status</Label>
+            <Select value={useWatch({ control, name: 'postSurgicalRisk' })} onValueChange={(v) => setValue('postSurgicalRisk', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select post-surgical status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="excellent">Excellent response</SelectItem>
+                <SelectItem value="biochemical">Biochemical incomplete</SelectItem>
+                <SelectItem value="structural">Structural incomplete</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
     </div>
