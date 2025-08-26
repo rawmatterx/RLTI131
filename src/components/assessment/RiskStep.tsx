@@ -24,15 +24,29 @@ const riskSchema = z.object({
   brafMutation: z.boolean().optional(),
   rasMutation: z.boolean().optional(),
   retPtcRearrangement: z.boolean().optional(),
-  molecularRiskScore: z.enum(["low", "intermediate", "high"]).optional(),
+  tertPromoterMutation: z.boolean().optional(),
+  brafTertCombination: z.boolean().optional(),
+  rasTertCombination: z.boolean().optional(),
+  otherHighRiskMutations: z.boolean().optional(),
+  molecularRiskScore: z.enum(["minimal", "low", "intermediate", "high"]).optional(),
   
-  // ATA 2025 ultrasound-based features  
-  suspiciousUSFeatures: z.boolean().optional(),
-  centralLNImaging: z.boolean().optional(),
+  // ATA 2025 Official Risk Stratification
+  ataRiskCategory: z.enum(["low", "intermediate-low", "intermediate-high", "high"]).optional(),
   
-  // ATA 2025 follow-up stratification
-  followUpRisk: z.enum(["low", "intermediate", "high"]).optional(),
-  postSurgicalRisk: z.enum(["excellent", "biochemical", "structural"]).optional(),
+  // ATA 2025 TNM Staging (8th Edition)
+  pTCategory: z.enum(["TX", "T0", "T1a", "T1b", "T2", "T3a", "T3b", "T4a", "T4b"]).optional(),
+  pNCategory: z.enum(["NX", "N0", "N1a", "N1b"]).optional(),
+  mCategory: z.enum(["M0", "M1"]).optional(),
+  
+  // ATA 2025 Specific Risk Factors
+  tumorFocality: z.enum(["unifocal-microcarcinoma", "multifocal-microcarcinoma", "unifocal-larger", "multifocal-larger"]).optional(),
+  lymphNodeVolume: z.enum(["none", "small-volume", "intermediate-volume", "large-volume"]).optional(),
+  extranodal_extension: z.boolean().optional(),
+  completenessOfResection: z.enum(["R0", "R1", "R2"]).optional(),
+  postopThyroglobulin: z.enum(["undetectable", "low-level", "elevated", "suggestive-metastases"]).optional(),
+  
+  // ATA 2025 Response Assessment
+  responseToTherapy: z.enum(["excellent", "indeterminate", "biochemical-incomplete", "structural-incomplete"]).optional(),
 })
 
 type RiskForm = z.infer<typeof riskSchema>
@@ -144,13 +158,69 @@ export function RiskStep({ resetToken }: { resetToken?: number }) {
         </div>
       </div>
 
+      {/* ATA 2025 TNM Staging (8th Edition) */}
+      <div className="mt-8 p-4 border rounded-lg bg-purple-50">
+        <h3 className="text-lg font-semibold mb-4 text-purple-800">🏥 ATA 2025 TNM Staging (8th Edition)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Primary Tumor (pT)</Label>
+            <Select value={useWatch({ control, name: 'pTCategory' })} onValueChange={(v) => setValue('pTCategory', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select pT" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="T1a">T1a (≤1cm, intrathyroidal)</SelectItem>
+                <SelectItem value="T1b">T1b (>1-2cm, intrathyroidal)</SelectItem>
+                <SelectItem value="T2">T2 (>2-4cm, intrathyroidal)</SelectItem>
+                <SelectItem value="T3a">T3a (>4cm, intrathyroidal)</SelectItem>
+                <SelectItem value="T3b">T3b (MEE into strap muscles)</SelectItem>
+                <SelectItem value="T4a">T4a (Gross ETE)</SelectItem>
+                <SelectItem value="T4b">T4b (Advanced ETE)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Regional Lymph Nodes (pN)</Label>
+            <Select value={useWatch({ control, name: 'pNCategory' })} onValueChange={(v) => setValue('pNCategory', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select pN" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="N0">N0 (No regional LN metastasis)</SelectItem>
+                <SelectItem value="N1a">N1a (Central compartment)</SelectItem>
+                <SelectItem value="N1b">N1b (Lateral cervical)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Distant Metastasis (M)</Label>
+            <Select value={useWatch({ control, name: 'mCategory' })} onValueChange={(v) => setValue('mCategory', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select M" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="M0">M0 (No distant metastasis)</SelectItem>
+                <SelectItem value="M1">M1 (Distant metastasis present)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
       {/* ATA 2025 Molecular Markers Section */}
-      <div className="mt-8 p-4 border rounded-lg bg-blue-50">
-        <h3 className="text-lg font-semibold mb-4 text-blue-800">ATA 2025 Molecular Markers</h3>
+      <div className="mt-6 p-4 border rounded-lg bg-blue-50">
+        <h3 className="text-lg font-semibold mb-4 text-blue-800">🧬 ATA 2025 Molecular Profiling</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-2">
             <Checkbox id="braf" checked={!!useWatch({ control, name: 'brafMutation' })} onCheckedChange={v => setValue('brafMutation', v as boolean)} />
-            <Label htmlFor="braf" className="text-sm">BRAF mutation</Label>
+            <Label htmlFor="braf" className="text-sm">BRAF V600E mutation</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="tert" checked={!!useWatch({ control, name: 'tertPromoterMutation' })} onCheckedChange={v => setValue('tertPromoterMutation', v as boolean)} />
+            <Label htmlFor="tert" className="text-sm">TERT promoter mutation</Label>
           </div>
 
           <div className="flex items-center gap-2">
@@ -163,6 +233,21 @@ export function RiskStep({ resetToken }: { resetToken?: number }) {
             <Label htmlFor="ret" className="text-sm">RET/PTC rearrangement</Label>
           </div>
 
+          <div className="flex items-center gap-2">
+            <Checkbox id="braf-tert" checked={!!useWatch({ control, name: 'brafTertCombination' })} onCheckedChange={v => setValue('brafTertCombination', v as boolean)} />
+            <Label htmlFor="braf-tert" className="text-sm font-semibold text-red-600">BRAF + TERT combination (highest risk)</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="ras-tert" checked={!!useWatch({ control, name: 'rasTertCombination' })} onCheckedChange={v => setValue('rasTertCombination', v as boolean)} />
+            <Label htmlFor="ras-tert" className="text-sm font-semibold text-red-600">RAS + TERT combination</Label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="other-high" checked={!!useWatch({ control, name: 'otherHighRiskMutations' })} onCheckedChange={v => setValue('otherHighRiskMutations', v as boolean)} />
+            <Label htmlFor="other-high" className="text-sm">Other high-risk mutations (TP53, PIK3CA, AKT1, EIF1AX)</Label>
+          </div>
+
           <div className="space-y-1">
             <Label className="text-sm">Molecular risk score</Label>
             <Select value={useWatch({ control, name: 'molecularRiskScore' })} onValueChange={(v) => setValue('molecularRiskScore', v as any)}>
@@ -170,6 +255,7 @@ export function RiskStep({ resetToken }: { resetToken?: number }) {
                 <SelectValue placeholder="Select molecular risk" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="minimal">Minimal</SelectItem>
                 <SelectItem value="low">Low</SelectItem>
                 <SelectItem value="intermediate">Intermediate</SelectItem>
                 <SelectItem value="high">High</SelectItem>
@@ -179,50 +265,111 @@ export function RiskStep({ resetToken }: { resetToken?: number }) {
         </div>
       </div>
 
-      {/* ATA 2025 Ultrasound Features Section */}
+      {/* ATA 2025 Specific Risk Factors */}
       <div className="mt-6 p-4 border rounded-lg bg-green-50">
-        <h3 className="text-lg font-semibold mb-4 text-green-800">ATA 2025 Ultrasound-Based Assessment</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Checkbox id="sus-us" checked={!!useWatch({ control, name: 'suspiciousUSFeatures' })} onCheckedChange={v => setValue('suspiciousUSFeatures', v as boolean)} />
-            <Label htmlFor="sus-us" className="text-sm">Suspicious ultrasound features (prioritize over size)</Label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox id="central-ln" checked={!!useWatch({ control, name: 'centralLNImaging' })} onCheckedChange={v => setValue('centralLNImaging', v as boolean)} />
-            <Label htmlFor="central-ln" className="text-sm">Imaging-confirmed central LN involvement</Label>
-          </div>
-        </div>
-      </div>
-
-      {/* ATA 2025 Follow-up Strategy Section */}
-      <div className="mt-6 p-4 border rounded-lg bg-yellow-50">
-        <h3 className="text-lg font-semibold mb-4 text-yellow-800">ATA 2025 Follow-up Stratification</h3>
+        <h3 className="text-lg font-semibold mb-4 text-green-800">📋 ATA 2025 Specific Risk Factors</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <Label className="text-sm">Follow-up risk category</Label>
-            <Select value={useWatch({ control, name: 'followUpRisk' })} onValueChange={(v) => setValue('followUpRisk', v as any)}>
+            <Label className="text-sm font-medium">Tumor Focality</Label>
+            <Select value={useWatch({ control, name: 'tumorFocality' })} onValueChange={(v) => setValue('tumorFocality', v as any)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select follow-up risk" />
+                <SelectValue placeholder="Select tumor focality" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="low">Low (de-escalated monitoring)</SelectItem>
-                <SelectItem value="intermediate">Intermediate (selective approach)</SelectItem>
-                <SelectItem value="high">High (intensive follow-up)</SelectItem>
+                <SelectItem value="unifocal-microcarcinoma">Unifocal Papillary Microcarcinoma (1-2% recurrence)</SelectItem>
+                <SelectItem value="multifocal-microcarcinoma">Multifocal Papillary Microcarcinoma (4-6% recurrence)</SelectItem>
+                <SelectItem value="unifocal-larger">Unifocal Larger Tumor</SelectItem>
+                <SelectItem value="multifocal-larger">Multifocal Larger Tumor</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-1">
-            <Label className="text-sm">Post-surgical risk status</Label>
-            <Select value={useWatch({ control, name: 'postSurgicalRisk' })} onValueChange={(v) => setValue('postSurgicalRisk', v as any)}>
+            <Label className="text-sm font-medium">Lymph Node Volume</Label>
+            <Select value={useWatch({ control, name: 'lymphNodeVolume' })} onValueChange={(v) => setValue('lymphNodeVolume', v as any)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select post-surgical status" />
+                <SelectValue placeholder="Select LN volume" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="excellent">Excellent response</SelectItem>
-                <SelectItem value="biochemical">Biochemical incomplete</SelectItem>
-                <SelectItem value="structural">Structural incomplete</SelectItem>
+                <SelectItem value="none">No Lymph Node Metastases</SelectItem>
+                <SelectItem value="small-volume">Small Volume (≤5 micrometastases <0.2cm)</SelectItem>
+                <SelectItem value="intermediate-volume">Intermediate Volume (Clinical N1, all <3cm)</SelectItem>
+                <SelectItem value="large-volume">Large Volume (Any ≥3cm LN)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="ene" checked={!!useWatch({ control, name: 'extranodal_extension' })} onCheckedChange={v => setValue('extranodal_extension', v as boolean)} />
+            <Label htmlFor="ene" className="text-sm">Extranodal Extension (ENE)</Label>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Completeness of Resection</Label>
+            <Select value={useWatch({ control, name: 'completenessOfResection' })} onValueChange={(v) => setValue('completenessOfResection', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select resection status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="R0">R0 (Complete resection)</SelectItem>
+                <SelectItem value="R1">R1 (Microscopic residual)</SelectItem>
+                <SelectItem value="R2">R2 (Gross residual disease)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Postoperative Thyroglobulin</Label>
+            <Select value={useWatch({ control, name: 'postopThyroglobulin' })} onValueChange={(v) => setValue('postopThyroglobulin', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Tg level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="undetectable">Undetectable</SelectItem>
+                <SelectItem value="low-level">Low Level</SelectItem>
+                <SelectItem value="elevated">Elevated</SelectItem>
+                <SelectItem value="suggestive-metastases">Suggestive of Distant Metastases</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox id="sus-us" checked={!!useWatch({ control, name: 'suspiciousUSFeatures' })} onCheckedChange={v => setValue('suspiciousUSFeatures', v as boolean)} />
+            <Label htmlFor="sus-us" className="text-sm">Suspicious ultrasound features</Label>
+          </div>
+        </div>
+      </div>
+
+      {/* ATA 2025 Dynamic Risk Assessment */}
+      <div className="mt-6 p-4 border rounded-lg bg-yellow-50">
+        <h3 className="text-lg font-semibold mb-4 text-yellow-800">📊 ATA 2025 Dynamic Risk Assessment</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">ATA Risk Category (Overall)</Label>
+            <Select value={useWatch({ control, name: 'ataRiskCategory' })} onValueChange={(v) => setValue('ataRiskCategory', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select ATA risk category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low Risk (1-6% recurrence)</SelectItem>
+                <SelectItem value="intermediate-low">Intermediate-Low Risk (3-9% recurrence)</SelectItem>
+                <SelectItem value="intermediate-high">Intermediate-High Risk (8-22% recurrence)</SelectItem>
+                <SelectItem value="high">High Risk (27-75% recurrence)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-sm font-medium">Response to Therapy (Dynamic Assessment)</Label>
+            <Select value={useWatch({ control, name: 'responseToTherapy' })} onValueChange={(v) => setValue('responseToTherapy', v as any)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select response" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="excellent">Excellent Response (<15% recurrence)</SelectItem>
+                <SelectItem value="indeterminate">Indeterminate Response (~20% progression)</SelectItem>
+                <SelectItem value="biochemical-incomplete">Biochemical Incomplete (up to 53% recurrence)</SelectItem>
+                <SelectItem value="structural-incomplete">Structural Incomplete (67-75% recurrence)</SelectItem>
               </SelectContent>
             </Select>
           </div>

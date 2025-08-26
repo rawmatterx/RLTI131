@@ -109,19 +109,40 @@ export type RiskFactors = {
   marginStatus?: 'negative' | 'microscopic' | 'positive'
   tallCellPercent?: number
   
-  // ATA 2025 molecular markers
+  // ATA 2025 molecular markers (Evidence-based)
   brafMutation?: boolean
   rasMutation?: boolean
   retPtcRearrangement?: boolean
-  molecularRiskScore?: 'low' | 'intermediate' | 'high'
+  tertPromoterMutation?: boolean
+  molecularRiskScore?: 'minimal' | 'low' | 'intermediate' | 'high'
   
   // ATA 2025 ultrasound-based features  
   suspiciousUSFeatures?: boolean
   centralLNImaging?: boolean
   
-  // ATA 2025 follow-up stratification
-  followUpRisk?: 'low' | 'intermediate' | 'high'
-  postSurgicalRisk?: 'excellent' | 'biochemical' | 'structural'
+  // ATA 2025 Official 4-tier Risk Stratification System
+  ataRiskCategory?: 'low' | 'intermediate-low' | 'intermediate-high' | 'high'
+  
+  // ATA 2025 Dynamic Response Assessment
+  responseToTherapy?: 'excellent' | 'indeterminate' | 'biochemical-incomplete' | 'structural-incomplete'
+  
+  // ATA 2025 TNM Staging (8th Edition)
+  pTCategory?: 'TX' | 'T0' | 'T1a' | 'T1b' | 'T2' | 'T3a' | 'T3b' | 'T4a' | 'T4b'
+  pNCategory?: 'NX' | 'N0' | 'N1a' | 'N1b'
+  mCategory?: 'M0' | 'M1'
+  ajccStage?: 'I' | 'II' | 'III' | 'IVA' | 'IVB'
+  
+  // ATA 2025 Specific Risk Factors
+  tumorFocality?: 'unifocal-microcarcinoma' | 'multifocal-microcarcinoma' | 'unifocal-larger' | 'multifocal-larger'
+  lymphNodeVolume?: 'none' | 'small-volume' | 'intermediate-volume' | 'large-volume'
+  extranodal_extension?: boolean
+  completenessOfResection?: 'R0' | 'R1' | 'R2'
+  postopThyroglobulin?: 'undetectable' | 'low-level' | 'elevated' | 'suggestive-metastases'
+  
+  // Enhanced molecular profiling (ATA 2025)
+  brafTertCombination?: boolean // Co-existent BRAF + TERT mutations (highest risk)
+  rasTertCombination?: boolean // Co-existent RAS + TERT mutations
+  otherHighRiskMutations?: boolean // TP53, PIK3CA, AKT1, EIF1AX combinations
 }
 
 export type Protocol = {

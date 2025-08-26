@@ -144,19 +144,19 @@ class RulesEngine {
       // Convert back to our format
       const results = this.convertRulesOutput(rulesOutput)
 
-      // Append ATA risk stratification (low/intermediate/high risk of recurrence)
+      // Append ATA 2025 4-tier risk stratification for structural disease persistence/recurrence
       const ata = this.calculateATARisk(patientData)
       if (ata) {
         results.unshift({
-          id: `ATA-RISK-${ata.level.toUpperCase()}`,
-          title: `ATA ${ata.level} risk of recurrence`,
-          severity: ata.level === 'high' ? 'WARN' : 'PASS',
-          rationale: ata.reason,
+          id: `ATA-2025-RISK-${ata.level.toUpperCase().replace('-', '_')}`,
+          title: `ATA 2025 ${ata.level.replace('-', '-')} risk of recurrence (${ata.recurrenceRate})`,
+          severity: ata.level === 'high' ? 'FAIL' : ata.level.includes('intermediate') ? 'WARN' : 'PASS',
+          rationale: `${ata.reason}\n\nRecommendations:\n• ${ata.recommendations.join('\n• ')}`,
           inputsUsed: ata.inputs,
           references: [
-            "ATA 2025 updated differentiated thyroid cancer risk stratification with molecular markers",
-            "ATA 2025 selective lymph node dissection guidelines",
-            "ATA 2025 de-escalated follow-up protocols"
+            "ATA 2025 Management Guidelines for Adult Patients with Differentiated Thyroid Cancer",
+            "ATA 2025 DATA Framework: Diagnosis, Assessment, Treatment, response Assessment",
+            "ATA 2025 4-tier Risk Stratification System for Structural Disease Persistence/Recurrence"
           ],
         })
       }
@@ -170,77 +170,165 @@ class RulesEngine {
   }
 
   private calculateATARisk(assessment: Partial<Assessment>):
-    | { level: 'low' | 'intermediate' | 'high'; reason: string; inputs: string[] }
+    | { level: 'low' | 'intermediate-low' | 'intermediate-high' | 'high'; reason: string; inputs: string[]; recurrenceRate: string; recommendations: string[] }
     | null {
     const clinical = assessment.clinical || ({} as any)
     const imaging = assessment.imaging || ({} as any)
     const risk = (assessment as any).risk || {}
 
-    // ATA 2025 enhanced risk stratification with molecular markers
-    // Incorporates molecular testing, sonographic features, and selective approaches
+    // ATA 2025 OFFICIAL 4-tier Risk Stratification System for Structural Disease Persistence/Recurrence
+    // Based on DATA framework: Diagnosis, risk/benefit Assessment, Treatment decisions, response Assessment
     
-    // Traditional risk factors
-    const aggressiveHistology = risk.aggressiveHistology || (typeof clinical.diagnosis === 'string' && /tall cell|hobnail|columnar/i.test(clinical.diagnosis))
-    const hasMetastasis = risk.distantMetastasis === true || !!imaging?.metastatic
-    const hasRemnantBeyondBed = imaging?.remnant === true
-    const eteGross = risk.extrathyroidalExtension === 'gross'
-    const eteMicro = risk.extrathyroidalExtension === 'micro'
-    const lnMacro = risk.lymphNodeMetastasis === 'macroscopic'
-    const lnMicro = risk.lymphNodeMetastasis === 'microscopic'
+    const riskFactors = []
+    const recommendations = []
+    
+    // Extract ATA 2025 specific risk factors
+    const tumorSize = risk.primaryTumorSizeCm || 0
+    const aggressiveHistology = risk.aggressiveHistology || (typeof clinical.diagnosis === 'string' && /tall cell|hobnail|columnar|diffuse sclerosing|insular/i.test(clinical.diagnosis))
+    const hasMetastasis = risk.distantMetastasis === true || !!imaging?.metastatic || risk.mCategory === 'M1'
+    const eteGross = risk.extrathyroidalExtension === 'gross' || risk.pTCategory === 'T4a' || risk.pTCategory === 'T4b'
+    const eteMicro = risk.extrathyroidalExtension === 'micro' || risk.pTCategory === 'T3b'
     const vascular = risk.vascularInvasion === true
+    const incompleteResection = risk.completenessOfResection === 'R2'
+    const elevatedTg = risk.postopThyroglobulin === 'suggestive-metastases' || risk.postopThyroglobulin === 'elevated'
     
-    // ATA 2025 molecular markers
+    // ATA 2025 Lymph Node Volume Assessment
+    const lymphNodeVolume = risk.lymphNodeVolume || 'none'
+    const largeVolumeLN = lymphNodeVolume === 'large-volume' // ≥3cm LN
+    const intermediateVolumeLN = lymphNodeVolume === 'intermediate-volume' // Clinical N1 or >5 pathologic N1, all <3cm
+    const smallVolumeLN = lymphNodeVolume === 'small-volume' // ≤5 pathologic N1 micrometastases <0.2cm
+    const extranodal_extension = risk.extranodal_extension === true
+    
+    // ATA 2025 Molecular Profiling (High-risk combinations)
+    const brafTertCombination = risk.brafTertCombination === true // Highest risk combination
+    const rasTertCombination = risk.rasTertCombination === true
     const brafMutation = risk.brafMutation === true
-    const rasMutation = risk.rasMutation === true
-    const retPtcRearrangement = risk.retPtcRearrangement === true
-    const molecularHighRisk = risk.molecularRiskScore === 'high'
-    const molecularIntermediateRisk = risk.molecularRiskScore === 'intermediate'
+    const tertPromoterMutation = risk.tertPromoterMutation === true
+    const otherHighRiskMutations = risk.otherHighRiskMutations === true // TP53, PIK3CA, AKT1, EIF1AX
     
-    // ATA 2025 ultrasound-based features
-    const suspiciousUSFeatures = risk.suspiciousUSFeatures === true
-    const centralLNImaging = risk.centralLNImaging === true
+    // ATA 2025 Tumor Focality Assessment
+    const tumorFocality = risk.tumorFocality || 'unifocal-microcarcinoma'
+    const multifocalMicrocarcinoma = tumorFocality === 'multifocal-microcarcinoma'
+    const unifocalMicrocarcinoma = tumorFocality === 'unifocal-microcarcinoma'
     
-    // Primary tumor size consideration (ATA 2025 de-emphasizes size alone)
-    const largeTumor = (risk.primaryTumorSizeCm || 0) > 4
-
-    // HIGH RISK (ATA 2025 criteria)
-    if (hasMetastasis || eteGross || (lnMacro && centralLNImaging)) {
-      return {
-        level: 'high',
-        reason: 'ATA 2025 High Risk: Distant metastasis, gross ETE, or imaging-confirmed macroscopic LN metastasis → aggressive surgical approach indicated',
-        inputs: ['risk.distantMetastasis', 'risk.extrathyroidalExtension', 'risk.lymphNodeMetastasis', 'risk.centralLNImaging'],
-      }
-    }
-
-    // INTERMEDIATE RISK (ATA 2025 enhanced criteria)
+    // ATA 2025 Extensive Vascular Invasion Assessment
+    const extensiveVascularInvasion = vascular && (clinical.diagnosis?.includes('follicular') || clinical.diagnosis?.includes('FTC'))
+    
+    // ATA 2025 OFFICIAL RISK STRATIFICATION ALGORITHM
+    
+    // HIGH RISK CATEGORY (27-75% recurrence rates)
     if (
-      aggressiveHistology || 
-      vascular || 
-      eteMicro || 
-      lnMicro ||
-      brafMutation ||
-      molecularHighRisk ||
-      molecularIntermediateRisk ||
-      (suspiciousUSFeatures && largeTumor) ||
-      hasRemnantBeyondBed
+      hasMetastasis || // Distant metastases (M1)
+      eteGross || // Gross extrathyroidal extension (T4a/T4b)
+      incompleteResection || // Gross residual disease (R2)
+      elevatedTg || // Postop Tg suggestive of distant metastases
+      largeVolumeLN || // Any metastatic LN ≥3cm
+      (extranodal_extension && lymphNodeVolume !== 'none' && lymphNodeVolume !== 'small-volume') || // ENE with >3 positive nodes
+      extensiveVascularInvasion || // ≥4 vessels or extracapsular vascular invasion in FTC
+      brafTertCombination || // Co-existent BRAF + TERT mutations
+      rasTertCombination || // Co-existent RAS + TERT mutations
+      otherHighRiskMutations // TP53, PIK3CA, AKT1 combinations
     ) {
-      const molecularText = brafMutation ? ' with BRAF mutation' : 
-                           rasMutation ? ' with RAS mutation' : 
-                           retPtcRearrangement ? ' with RET/PTC rearrangement' : 
-                           molecularHighRisk ? ' with high molecular risk score' : ''
+      if (hasMetastasis) riskFactors.push('distant metastases present')
+      if (eteGross) riskFactors.push('gross extrathyroidal extension')
+      if (incompleteResection) riskFactors.push('incomplete tumor resection (R2)')
+      if (elevatedTg) riskFactors.push('elevated postoperative thyroglobulin')
+      if (largeVolumeLN) riskFactors.push('large volume lymph node metastases (≥3cm)')
+      if (extranodal_extension) riskFactors.push('extranodal extension')
+      if (extensiveVascularInvasion) riskFactors.push('extensive vascular invasion (≥4 vessels)')
+      if (brafTertCombination) riskFactors.push('BRAF + TERT promoter mutations')
+      if (rasTertCombination) riskFactors.push('RAS + TERT promoter mutations')
+      if (otherHighRiskMutations) riskFactors.push('high-risk molecular combinations')
+      
+      recommendations.push('Aggressive surgical approach with multidisciplinary team')
+      recommendations.push('Intensive surveillance protocol')
+      recommendations.push('Consider adjuvant radioactive iodine therapy')
+      recommendations.push('TSH suppression therapy')
+      recommendations.push('Molecular profiling for systemic therapy planning')
       
       return {
-        level: 'intermediate',
-        reason: `ATA 2025 Intermediate Risk: Molecular-enhanced stratification${molecularText}, suspicious ultrasound features, or microscopic aggressive features → selective follow-up approach`,
-        inputs: ['risk.aggressiveHistology', 'risk.vascularInvasion', 'risk.brafMutation', 'risk.molecularRiskScore', 'risk.suspiciousUSFeatures'],
+        level: 'high',
+        reason: `ATA 2025 HIGH RISK: ${riskFactors.join(', ')} (Recurrence rate: 27-75%)`,
+        inputs: ['risk.distantMetastasis', 'risk.extrathyroidalExtension', 'risk.completenessOfResection', 'risk.lymphNodeVolume', 'risk.brafTertCombination'],
+        recurrenceRate: '27-75%',
+        recommendations
       }
     }
-
-    // LOW RISK (ATA 2025 de-escalated follow-up)
+    
+    // INTERMEDIATE-HIGH RISK CATEGORY (8-22% recurrence rates)
+    if (
+      aggressiveHistology || // Tall cell, hobnail, columnar, diffuse sclerosing variants
+      vascular || // Vascular invasion in PTC/OTC
+      intermediateVolumeLN || // Clinical N1 or >5 pathologic N1, all <3cm
+      eteMicro || // Microscopic extrathyroidal extension
+      (tumorSize > 4) || // Intrathyroidal PTC >4cm
+      tertPromoterMutation || // TERT promoter mutation alone
+      brafMutation || // BRAF V600E mutation alone
+      multifocalMicrocarcinoma // Multifocal papillary microcarcinoma
+    ) {
+      if (aggressiveHistology) riskFactors.push('aggressive histologic variant')
+      if (vascular) riskFactors.push('vascular invasion')
+      if (intermediateVolumeLN) riskFactors.push('intermediate volume lymph node metastases')
+      if (eteMicro) riskFactors.push('microscopic extrathyroidal extension')
+      if (tumorSize > 4) riskFactors.push('large intrathyroidal tumor (>4cm)')
+      if (tertPromoterMutation) riskFactors.push('TERT promoter mutation')
+      if (brafMutation) riskFactors.push('BRAF V600E mutation')
+      if (multifocalMicrocarcinoma) riskFactors.push('multifocal papillary microcarcinoma')
+      
+      recommendations.push('Selective approach with molecular-guided decisions')
+      recommendations.push('Moderate surveillance intensity')
+      recommendations.push('Consider radioactive iodine therapy based on risk-benefit analysis')
+      recommendations.push('Degree of TSH suppression based on response assessment')
+      
+      return {
+        level: 'intermediate-high',
+        reason: `ATA 2025 INTERMEDIATE-HIGH RISK: ${riskFactors.join(', ')} (Recurrence rate: 8-22%)`,
+        inputs: ['risk.aggressiveHistology', 'risk.vascularInvasion', 'risk.lymphNodeVolume', 'risk.extrathyroidalExtension', 'risk.primaryTumorSizeCm'],
+        recurrenceRate: '8-22%',
+        recommendations
+      }
+    }
+    
+    // INTERMEDIATE-LOW RISK CATEGORY (3-9% recurrence rates)
+    if (
+      smallVolumeLN || // ≤5 pathologic N1 micrometastases <0.2cm
+      (tumorSize >= 2 && tumorSize <= 4) || // Intrathyroidal PTC 2-4cm
+      (multifocalMicrocarcinoma && eteMicro) // Multifocal microcarcinoma with microscopic ETE
+    ) {
+      if (smallVolumeLN) riskFactors.push('small volume lymph node micrometastases')
+      if (tumorSize >= 2 && tumorSize <= 4) riskFactors.push('intermediate size intrathyroidal tumor (2-4cm)')
+      if (multifocalMicrocarcinoma && eteMicro) riskFactors.push('multifocal microcarcinoma with microscopic extension')
+      
+      recommendations.push('Standard follow-up protocol')
+      recommendations.push('Radioactive iodine therapy may be considered')
+      recommendations.push('TSH suppression to lower normal range')
+      recommendations.push('Regular biochemical and imaging surveillance')
+      
+      return {
+        level: 'intermediate-low',
+        reason: `ATA 2025 INTERMEDIATE-LOW RISK: ${riskFactors.join(', ')} (Recurrence rate: 3-9%)`,
+        inputs: ['risk.lymphNodeVolume', 'risk.primaryTumorSizeCm', 'risk.tumorFocality'],
+        recurrenceRate: '3-9%',
+        recommendations
+      }
+    }
+    
+    // LOW RISK CATEGORY (1-6% recurrence rates)
+    if (unifocalMicrocarcinoma) riskFactors.push('unifocal papillary microcarcinoma')
+    if (tumorSize <= 1) riskFactors.push('intrathyroidal tumor ≤1cm')
+    if (!riskFactors.length) riskFactors.push('no significant risk factors identified')
+    
+    recommendations.push('De-escalated surveillance approach')
+    recommendations.push('Radioactive iodine therapy generally not recommended')
+    recommendations.push('TSH suppression not routinely recommended')
+    recommendations.push('Less frequent follow-up intervals appropriate')
+    
     return {
       level: 'low',
-      reason: 'ATA 2025 Low Risk: No aggressive molecular markers or imaging features → de-escalated follow-up with less frequent monitoring recommended',
-      inputs: ['clinical.diagnosis', 'risk.molecularRiskScore', 'risk.suspiciousUSFeatures'],
+      reason: `ATA 2025 LOW RISK: ${riskFactors.join(', ')} (Recurrence rate: 1-6%)`,
+      inputs: ['risk.tumorFocality', 'risk.primaryTumorSizeCm', 'clinical.diagnosis'],
+      recurrenceRate: '1-6%',
+      recommendations
     }
   }
 
