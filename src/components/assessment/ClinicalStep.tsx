@@ -17,7 +17,6 @@ import { Plus, Minus } from "lucide-react"
 const clinicalSchema = z.object({
   diagnosis: z.string().min(1, "Diagnosis is required"),
   priorI131: z.boolean().optional(),
-  thyroidectomy: z.enum(["total", "near_total", "partial", "none"]).optional(),
   
   // Surgical Information
   surgicalInformation: z.object({
@@ -189,23 +188,7 @@ export function ClinicalStep({ resetToken }: { resetToken?: number }) {
             {errors.diagnosis && <p className="text-sm text-destructive">{errors.diagnosis.message}</p>}
           </div>
 
-          <div className="space-y-2">
-            <Label>Thyroidectomy Status</Label>
-            <Select
-              value={useWatch({ control, name: 'thyroidectomy' })}
-              onValueChange={(value) => setValue("thyroidectomy", value as any)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select thyroidectomy status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="total">Total thyroidectomy</SelectItem>
-                <SelectItem value="near_total">Near-total thyroidectomy</SelectItem>
-                <SelectItem value="partial">Partial thyroidectomy</SelectItem>
-                <SelectItem value="none">No thyroidectomy</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
         </CardContent>
       </Card>
 
@@ -261,10 +244,10 @@ export function ClinicalStep({ resetToken }: { resetToken?: number }) {
         </CardContent>
       </Card>
 
-      {/* Node Information */}
+      {/* Lymph Node Dissection Status */}
       <Card>
         <CardHeader>
-          <CardTitle>🔍 Lymph Node Information</CardTitle>
+          <CardTitle>🔍 Lymph Node Dissection Status</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

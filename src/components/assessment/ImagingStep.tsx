@@ -17,6 +17,23 @@ const imagingSchema = z.object({
   remnant: z.boolean().optional(),
   notes: z.string().optional(),
   
+  // USG and CT Findings
+  usgFindings: z.object({
+    thyroidRemnant: z.boolean().optional(),
+    suspiciousNodes: z.boolean().optional(),
+    vascularInvasion: z.boolean().optional(),
+    extrathyroidalExtension: z.boolean().optional(),
+    notes: z.string().optional(),
+  }).optional(),
+  
+  ctFindings: z.object({
+    neckNodes: z.boolean().optional(),
+    pulmonaryMetastases: z.boolean().optional(),
+    mediastinalNodes: z.boolean().optional(),
+    boneMetastases: z.boolean().optional(),
+    otherFindings: z.string().optional(),
+  }).optional(),
+  
   // Nuclear Medicine Investigation
   nuclearMedicine: z.object({
     wbs: z.object({
@@ -34,8 +51,18 @@ const imagingSchema = z.object({
     tg: z.string().optional(),
     uptake: z.string().optional(),
     raiu: z.object({
+      twoHour: z.boolean().optional(),
+      twoHourValue: z.number().optional(),
       twentyFourHour: z.boolean().optional(),
-      fortyEightHour: z.boolean().optional(),
+      twentyFourHourValue: z.number().optional(),
+      normalRange: z.string().optional(),
+    }).optional(),
+    
+    tc99mScan: z.object({
+      performed: z.boolean().optional(),
+      uptakeValue: z.number().optional(),
+      timePoint: z.string().optional(),
+      findings: z.string().optional(),
     }).optional(),
     ptScan: z.object({
       additionalLesion: z.boolean().optional(),
@@ -49,8 +76,8 @@ const imagingSchema = z.object({
   
   // Staging Information
   staging: z.object({
-    clinical: z.enum(["I", "II", "III", "IV"]).optional(),
-    tnm: z.enum(["I", "II", "III", "IV"]).optional(),
+    clinical: z.string().optional(),
+    tnm: z.string().optional(),
     postOpEvents: z.object({
       vocalCordPalsy: z.boolean().optional(),
       palpableMass: z.boolean().optional(),
@@ -90,43 +117,127 @@ export function ImagingStep({ resetToken }: { resetToken?: number }) {
 
   return (
     <div className="space-y-6">
-      {/* Basic Imaging Findings */}
+      {/* USG Findings */}
       <Card>
         <CardHeader>
-          <CardTitle>🔍 Basic Imaging Findings</CardTitle>
+          <CardTitle>🔍 USG Findings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="metastatic"
-                checked={!!useWatch({ control, name: 'metastatic' })}
-                onCheckedChange={(checked) => setValue('metastatic', checked as boolean)}
+                id="usg-remnant"
+                checked={!!useWatch({ control, name: 'usgFindings.thyroidRemnant' })}
+                onCheckedChange={(checked) => setValue('usgFindings.thyroidRemnant', checked as boolean)}
               />
-              <Label htmlFor="metastatic" className="text-sm font-normal">
-                Metastatic disease present
+              <Label htmlFor="usg-remnant" className="text-sm font-normal">
+                Thyroid remnant present
               </Label>
             </div>
 
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="remnant"
-                checked={!!useWatch({ control, name: 'remnant' })}
-                onCheckedChange={(checked) => setValue('remnant', checked as boolean)}
+                id="usg-nodes"
+                checked={!!useWatch({ control, name: 'usgFindings.suspiciousNodes' })}
+                onCheckedChange={(checked) => setValue('usgFindings.suspiciousNodes', checked as boolean)}
               />
-              <Label htmlFor="remnant" className="text-sm font-normal">
-                Thyroid remnant present
+              <Label htmlFor="usg-nodes" className="text-sm font-normal">
+                Suspicious lymph nodes
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="usg-vascular"
+                checked={!!useWatch({ control, name: 'usgFindings.vascularInvasion' })}
+                onCheckedChange={(checked) => setValue('usgFindings.vascularInvasion', checked as boolean)}
+              />
+              <Label htmlFor="usg-vascular" className="text-sm font-normal">
+                Vascular invasion
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="usg-extension"
+                checked={!!useWatch({ control, name: 'usgFindings.extrathyroidalExtension' })}
+                onCheckedChange={(checked) => setValue('usgFindings.extrathyroidalExtension', checked as boolean)}
+              />
+              <Label htmlFor="usg-extension" className="text-sm font-normal">
+                Extrathyroidal extension
               </Label>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="imaging-notes">Imaging Notes</Label>
+            <Label>USG Notes</Label>
             <Textarea
-              id="imaging-notes"
-              {...register("notes")}
-              placeholder="Additional imaging findings, locations of metastases, remnant size, etc."
-              rows={3}
+              {...register("usgFindings.notes")}
+              placeholder="Additional USG findings, remnant size, node characteristics, etc."
+              rows={2}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* CT Findings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>🔍 CT Findings</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="ct-neck"
+                checked={!!useWatch({ control, name: 'ctFindings.neckNodes' })}
+                onCheckedChange={(checked) => setValue('ctFindings.neckNodes', checked as boolean)}
+              />
+              <Label htmlFor="ct-neck" className="text-sm font-normal">
+                Neck lymph nodes
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="ct-pulmonary"
+                checked={!!useWatch({ control, name: 'ctFindings.pulmonaryMetastases' })}
+                onCheckedChange={(checked) => setValue('ctFindings.pulmonaryMetastases', checked as boolean)}
+              />
+              <Label htmlFor="ct-pulmonary" className="text-sm font-normal">
+                Pulmonary metastases
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="ct-mediastinal"
+                checked={!!useWatch({ control, name: 'ctFindings.mediastinalNodes' })}
+                onCheckedChange={(checked) => setValue('ctFindings.mediastinalNodes', checked as boolean)}
+              />
+              <Label htmlFor="ct-mediastinal" className="text-sm font-normal">
+                Mediastinal nodes
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="ct-bone"
+                checked={!!useWatch({ control, name: 'ctFindings.boneMetastases' })}
+                onCheckedChange={(checked) => setValue('ctFindings.boneMetastases', checked as boolean)}
+              />
+              <Label htmlFor="ct-bone" className="text-sm font-normal">
+                Bone metastases
+              </Label>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>CT Other Findings</Label>
+            <Textarea
+              {...register("ctFindings.otherFindings")}
+              placeholder="Other CT findings, distant metastases, structural abnormalities, etc."
+              rows={2}
             />
           </div>
         </CardContent>
@@ -253,26 +364,113 @@ export function ImagingStep({ resetToken }: { resetToken?: number }) {
           </div>
 
           {/* RAIU */}
-          <div className="space-y-3">
-            <h5 className="font-medium">RAIU (Radioactive Iodine Uptake)</h5>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="raiu-24h"
-                  checked={!!useWatch({ control, name: 'nuclearMedicine.raiu.twentyFourHour' })}
-                  onCheckedChange={(checked) => setValue('nuclearMedicine.raiu.twentyFourHour', checked as boolean)}
-                />
-                <Label htmlFor="raiu-24h" className="text-sm">24 Hour</Label>
+          <div className="space-y-4 p-4 border rounded-lg bg-green-50">
+            <h5 className="font-medium text-green-800">RAIU (Radioactive Iodine Uptake)</h5>
+            <div className="text-sm text-green-700 mb-3">
+              <strong>Normal Values:</strong> 2-hour: 1-13% | 24-hour: 8-30% (Latest Guidelines 2024)
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="raiu-2h"
+                    checked={!!useWatch({ control, name: 'nuclearMedicine.raiu.twoHour' })}
+                    onCheckedChange={(checked) => setValue('nuclearMedicine.raiu.twoHour', checked as boolean)}
+                  />
+                  <Label htmlFor="raiu-2h" className="text-sm font-medium">2 Hour RAIU</Label>
+                </div>
+                {useWatch({ control, name: 'nuclearMedicine.raiu.twoHour' }) && (
+                  <div className="ml-6">
+                    <Label className="text-xs">Value (%)</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      placeholder="Normal: 1-13%"
+                      onChange={(e) => setValue('nuclearMedicine.raiu.twoHourValue', parseFloat(e.target.value))}
+                      className="text-sm"
+                    />
+                  </div>
+                )}
               </div>
 
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="raiu-24h"
+                    checked={!!useWatch({ control, name: 'nuclearMedicine.raiu.twentyFourHour' })}
+                    onCheckedChange={(checked) => setValue('nuclearMedicine.raiu.twentyFourHour', checked as boolean)}
+                  />
+                  <Label htmlFor="raiu-24h" className="text-sm font-medium">24 Hour RAIU</Label>
+                </div>
+                {useWatch({ control, name: 'nuclearMedicine.raiu.twentyFourHour' }) && (
+                  <div className="ml-6">
+                    <Label className="text-xs">Value (%)</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      placeholder="Normal: 8-30%"
+                      onChange={(e) => setValue('nuclearMedicine.raiu.twentyFourHourValue', parseFloat(e.target.value))}
+                      className="text-sm"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Tc99m Pertechnetate Uptake Scan */}
+          <div className="space-y-4 p-4 border rounded-lg bg-purple-50">
+            <h5 className="font-medium text-purple-800">Tc99m Pertechnetate Uptake Scan</h5>
+            <div className="text-sm text-purple-700 mb-3">
+              <strong>Alternative when RAIU not available</strong> - Usually performed at 20-30 minutes post-injection
+            </div>
+            
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Checkbox
-                  id="raiu-48h"
-                  checked={!!useWatch({ control, name: 'nuclearMedicine.raiu.fortyEightHour' })}
-                  onCheckedChange={(checked) => setValue('nuclearMedicine.raiu.fortyEightHour', checked as boolean)}
+                  id="tc99m-performed"
+                  checked={!!useWatch({ control, name: 'nuclearMedicine.tc99mScan.performed' })}
+                  onCheckedChange={(checked) => setValue('nuclearMedicine.tc99mScan.performed', checked as boolean)}
                 />
-                <Label htmlFor="raiu-48h" className="text-sm">48 Hour</Label>
+                <Label htmlFor="tc99m-performed" className="text-sm font-medium">
+                  Tc99m Pertechnetate Scan Performed
+                </Label>
               </div>
+
+              {useWatch({ control, name: 'nuclearMedicine.tc99mScan.performed' }) && (
+                <div className="ml-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm">Uptake Value (%)</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 2.5"
+                      onChange={(e) => setValue('nuclearMedicine.tc99mScan.uptakeValue', parseFloat(e.target.value))}
+                      className="text-sm"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm">Time Point</Label>
+                    <Input
+                      placeholder="e.g., 20 minutes"
+                      {...register("nuclearMedicine.tc99mScan.timePoint")}
+                      className="text-sm"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <Label className="text-sm">Scan Findings</Label>
+                    <Textarea
+                      placeholder="Tc99m scan findings, uptake pattern, focal areas, etc."
+                      {...register("nuclearMedicine.tc99mScan.findings")}
+                      rows={2}
+                      className="text-sm"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -347,38 +545,18 @@ export function ImagingStep({ resetToken }: { resetToken?: number }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Clinical Staging</Label>
-              <Select
-                value={useWatch({ control, name: 'staging.clinical' })}
-                onValueChange={(value) => setValue('staging.clinical', value as any)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select clinical stage" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="I">Stage I</SelectItem>
-                  <SelectItem value="II">Stage II</SelectItem>
-                  <SelectItem value="III">Stage III</SelectItem>
-                  <SelectItem value="IV">Stage IV</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                {...register("staging.clinical")}
+                placeholder="e.g., Stage I, II, III, or IV"
+              />
             </div>
 
             <div className="space-y-2">
               <Label>TNM Staging</Label>
-              <Select
-                value={useWatch({ control, name: 'staging.tnm' })}
-                onValueChange={(value) => setValue('staging.tnm', value as any)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select TNM stage" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="I">Stage I</SelectItem>
-                  <SelectItem value="II">Stage II</SelectItem>
-                  <SelectItem value="III">Stage III</SelectItem>
-                  <SelectItem value="IV">Stage IV</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                {...register("staging.tnm")}
+                placeholder="e.g., T1N0M0, T3N1aM0"
+              />
             </div>
           </div>
 
@@ -418,9 +596,9 @@ export function ImagingStep({ resetToken }: { resetToken?: number }) {
 
       <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-800">
-          <strong>Nuclear Medicine Considerations:</strong> Comprehensive nuclear medicine evaluation including WBS, 
-          uptake studies, and PET scan findings help determine optimal I-131 therapy protocols and doses. Staging 
-          information guides treatment intensity and follow-up strategies.
+          <strong>Imaging & Nuclear Medicine Considerations:</strong> USG and CT findings help assess local disease extent 
+          and metastases. RAIU values guide I-131 therapy planning (Normal: 2h: 1-13%, 24h: 8-30%). Tc99m scan serves as 
+          alternative when RAIU unavailable. Comprehensive nuclear medicine evaluation determines optimal therapy protocols.
         </p>
       </div>
     </div>
