@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { usePatientStore } from "@/src/store"
 import { useEffect, useMemo } from "react"
 import type { LabKey, Labs } from "@/src/types"
-import { calculateEGFR } from "@/modules/calculations/medicalCalculations"
+import { calculateEGFR } from "../../utils/medicalCalculations"
 
 const labSchema = z.object({
   TSH: z

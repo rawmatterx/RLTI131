@@ -78,6 +78,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.0.1",
+    "next-transpile-modules": "^10.0.1",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
