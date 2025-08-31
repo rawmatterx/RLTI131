@@ -6,8 +6,9 @@ import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { usePatientStore } from "@/src/store"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import type { LabKey, Labs } from "@/src/types"
+import { calculateEGFR } from "@/utils/medicalCalculations"
 
 const labSchema = z.object({
   TSH: z
@@ -57,6 +58,7 @@ export function LabsStep({ resetToken }: { resetToken?: number }) {
     watch,
     setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm<LabForm>({
     resolver: zodResolver(labSchema),
@@ -87,6 +89,34 @@ export function LabsStep({ resetToken }: { resetToken?: number }) {
     return out as Labs
   }
 
+  // Watch creatinine and patient data to calculate eGFR
+  const creatinine = watch('Creatinine.value')
+  const patient = currentAssessment.patient
+  
+  // Calculate eGFR when creatinine or patient data changes
+  useEffect(() => {
+    if (creatinine && patient?.dob && patient?.sex) {
+      // Calculate age from DOB
+      const birthDate = new Date(patient.dob)
+      const today = new Date()
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const monthDiff = today.getMonth() - birthDate.getMonth()
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+      
+      // Only calculate for valid ages and creatinine
+      if (age > 0 && age < 120) {
+        const isFemale = patient.sex === 'F'
+        const egfr = calculateEGFR(creatinine, age, isFemale)
+        setValue('eGFR.value', egfr)
+        setValue('eGFR.unit', 'mL/min/1.73m²')
+      }
+    }
+  }, [creatinine, patient?.dob, patient?.sex, setValue])
+
+  // Update assessment when form values change
   useEffect(() => {
     const subscription = watch((value) => {
       const normalized = normalizeLabs(value as LabForm)
